@@ -77,41 +77,74 @@
         }).addTo(map);
 
         
-        L.icon = function (options) {
-			return new L.Icon({
-				iconUrl: "../../images/drinking_fountain.png",
-				iconSize: [15, 15]
-			});
+        L.icon = function (option) {
+            console.log("option: " + option);
+            switch(option){
+                case "drinking_water":
+                    return new L.Icon({
+                        iconUrl: "../../images/drinking_fountain.png",
+                        iconSize: [15, 15]
+                    });
+                case "fountain":
+                    return new L.Icon({
+                        iconUrl: "../../images/fountain.jpg",
+                        iconSize: [15, 15]
+                    });
+                
+            }
 		};
 
 		
 		function getNewOverPassLayer(query){
+            var splitQuery = query.split('=');
+            var option;
+            for(let i = 1; i < splitQuery.length; i++){
+                option = splitQuery[i].split(']')[0]; //gets the part before the ] but after the =
+            }
+            console.log(option);
 			return new L.OverPassLayer({
-						minZoom: 15,
+						minZoom: 14,
 						query: query,
-						markerIcon: L.icon(),
+						markerIcon: L.icon(option),
                         id: "OverPassLayer",
                         minZoomIndicatorOptions: {
                             position: 'bottomleft',
                             minZoomMessage: 'Current zoom: CURRENTZOOM - Data at: MINZOOMLEVEL'
                         }
-					});
+			});
 		}
 
-        var opl = getNewOverPassLayer('node [amenity=drinking_water] ({{bbox}}); out;')
-		osmMap2.addLayer(opl);
+        var selectedObjects = [];
+
+        function mapObjectGetter(objectName){
+            let query;
+            switch(objectName){
+                case "drinking_water":
+                    query = 'node [amenity=drinking_water] ({{bbox}}); out;';
+                    break;
+                case "fountain":
+                    query = 'node [amenity=fountain] ({{bbox}}); out;';
+                    break;
+                
+            }
+            return getNewOverPassLayer(query);
+        }
+
+        selectedObjects.push(mapObjectGetter("drinking_water"));
+        selectedObjects.push(mapObjectGetter("fountain"));
+        selectedObjects.forEach(object => osmMap2.addLayer(object));
         
         function updateOverPassLayer(map){
-			if(map.getZoom() < opl.options.minZoom) {
+			if(map.getZoom() < 14) {
 				map.eachLayer(function(layer){
                     if(layer.options.id === "OverPassLayer"){
-                        map.removeLayer(opl);
+                        map.removeLayer(layer);
                     }
 				});
 			} else {
-				map.addLayer(opl);
+                selectedObjects.forEach(ovpLayer => osmMap2.addLayer(ovpLayer));
             }
-	}
+	    }
         
         parent.addEventListener('updateMaps', function () {
             updateOverPassLayer(osmMap2);
