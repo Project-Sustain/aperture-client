@@ -1,30 +1,36 @@
 {
-  "name": "synopsisjs",
+  "name": "aperture",
   "version": "1.0.0",
-  "description": "Experimenting with D3 and Synopsis",
+  "description": "The Aperture client for the Urban-Sustain project - http://urban-sustain.org/",
   "main": "index.js",
   "scripts": {
     "build": "webpack",
     "watch": "webpack --watch --config webpack.config.js",
     "serve": "npm run watch & live-server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "coverage": "nyc --reporter=lcov mocha"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kevin-bruhwiler/SynopsisJS.git"
+    "url": "git+https://github.com/Project-Sustain/aperture-client.git"
   },
   "keywords": [],
   "author": "Kevin Bruhwiler",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kevin-bruhwiler/SynopsisJS/issues"
+    "url": "https://github.com/Project-Sustain/aperture-client/issues"
   },
-  "homepage": "https://github.com/kevin-bruhwiler/SynopsisJS#readme",
+  "homepage": "https://github.com/Project-Sustain/aperture-client#readme",
   "dependencies": {
     "create-react-app": "^2.1.1",
     "d3": "^5.7.0",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.1",
+    "jsdom-global": "^3.0.2",
+    "leaflet-overpass-layer": "^2.8.3",
     "live-server": "^1.2.1",
+    "mocha": "^7.1.0",
+    "mocha-jsdom": "^2.0.0",
+    "nyc": "^15.0.0",
     "requirejs": "^2.3.6",
     "set-default-browser": "^1.0.1"
   },
@@ -33,10 +39,10 @@
     "babel-loader": "^7.1.5",
     "babel-preset-latest": "^6.24.1",
     "css-loader": "^1.0.0",
-    "node-sass": "^4.9.3",
+    "node-sass": "^4.13.1",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.0",
-    "webpack": "^4.19.0",
-    "webpack-cli": "^3.1.0"
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11"
   }
 }

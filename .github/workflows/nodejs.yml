@@ -24,8 +24,14 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+    - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - run: chmod +x ./cc-test-reporter
+    - run: ./cc-test-reporter before-build
     - run: npm install
     - run: npm ci
     - run: npm run build --if-present
+    - run: npm run test
+    - run: npm run coverage
+    - run: ./cc-test-reporter after-build -r 67360605f902d9f1867b61e17e85107f03a659b5922fab26ee13fac6df3f4bff
       env:
         CI: true

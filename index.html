@@ -3,10 +3,8 @@
 <head>
     <meta charset="utf-8">
     <link rel="shortcut icon" href="#" />
-    <link rel="stylesheet" type="text/css" href="src/Iframe/Dependencies/spin.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
-
     <script src='src/controller.js'></script>
     <script>
         
@@ -26,59 +24,9 @@
 
 
     <title>Aperture</title>
-    <style>
-	#mapid {height:680px;}
-
-	.info {
-    	    padding: 6px 8px;
-    	    font: 14px/16px Arial, Helvetica, sans-serif;
-    	    background: white;
-    	    background: rgba(255,255,255,0.8);
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-            border-radius: 5px;
-        }
-    </style>
 </head>
 <body>
-    <text><h1>Aperture Example</h1></text>
-    <div id="viz"></div>
-    Geohash: <input type='text' id='geohash' value=""/>
-     <button type="button" id="update">Update Map</button> 
-    <br />
-    Geohash Precision:
-        <select id="precision">
-            <option selected=5 value=5>5</option>
-            <option value=4>4</option>
-            <option value=3>3</option>
-            <option value=2>2</option>
-            <option value=1>1</option>
-            <option value=0>0</option>
-        </select> 
-    <br/><br/> 
-    Start Time: <input type="datetime-local" id="starttime" name="starttime" value="2015-01-02T06:00" min="2015-01-04T06:00"
-    max="2015-01-31T00:00"/>
-    End Time: <input type="datetime-local" id="endtime" name="endtime" value="2015-01-31T00:00" min="2015-01-01T00:00"
-    max="2015-01-31T00:00"/>
-    <br/><br/>
-    <input type="checkbox" id="tempCheck" checked> Show Surface Temperature (K)<br/>
-    Minimum Surface Temperature: <input type='text' id='mintemp' value="0"/>
-    Maximum Surface Temperature: <input type='text' id='maxtemp' value="300"/>
-    <br/><br/>
-    <input type="checkbox" id="humCheck" checked> Show Relative Humidity (%)<br/>
-    Minimum Relative Humidity: <input type='text' id='minhum' value="0"/>
-    Maximum Relative Humidity: <input type='text' id='maxhum' value="101"/>
-    <br/><br/>
-    <input type="checkbox" id="visCheck"> Show Surface Visibility (m)<br/>
-    Minimum Surface Visibility: <input type='text' id='minvis' value="0"/>
-    Maximum Surface Visibility: <input type='text' id='maxvis' value="50000"/>
-    <br/><br/>
-    <input type="checkbox" id="preCheck" checked> Show Precipitable Water (mm)<br/>
-    Minimum Precipitable Water: <input type='text' id='minpre' value="0"/>
-    Maximum Precipitable Water: <input type='text' id='maxpre' value="100"/>
-
-
-    
-    <div class="mapContainer">
+    <div class="mapContainer" style="padding: 0px">
         <div class="loadingCover" id="loadCover">
             <img class="spinner" src="images/spinner.svg" alt="Loading...">
         </div>
