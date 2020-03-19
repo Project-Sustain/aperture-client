@@ -7,7 +7,7 @@
     "build": "webpack",
     "watch": "webpack --watch --config webpack.config.js",
     "serve": "npm run watch & live-server",
-    "test": "mocha",
+    "test": "mocha --recursive -r jsdom-global/register",
     "coverage": "nyc --reporter=lcov mocha"
   },
   "repository": {
@@ -22,11 +22,13 @@
   },
   "homepage": "https://github.com/Project-Sustain/aperture-client#readme",
   "dependencies": {
+    "canvas": "^2.6.1",
     "create-react-app": "^2.1.1",
     "d3": "^5.7.0",
     "jquery": "^3.4.1",
     "jsdom-global": "^3.0.2",
     "leaflet-overpass-layer": "^2.8.3",
+    "leaflet-timedimension": "^1.1.1",
     "live-server": "^1.2.1",
     "mocha": "^7.1.0",
     "mocha-jsdom": "^2.0.0",

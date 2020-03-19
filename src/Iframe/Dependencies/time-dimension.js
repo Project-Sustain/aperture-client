@@ -71,6 +71,6 @@ L.TimeDimension.Layer.CustomTimeDimension = L.TimeDimension.Layer.extend({
 	},
 });
 
-L.timeDimension.layer.VoronoiLayer = function(options) {
-    return new L.TimeDimension.Layer.VoronoiLayer(options);
+L.timeDimension.layer.CustomTimeDimension = function(options) {
+    return new L.TimeDimension.Layer.CustomTimeDimension(options);
 };
