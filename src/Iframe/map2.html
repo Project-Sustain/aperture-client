@@ -39,7 +39,24 @@
                     Water Infrastructure
                     <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                 </h1>
-                <div class="selectContainer"></div>
+                <div class="selectContainer">
+                    <input type="checkbox" id="drinking_water" onchange="changeChecked(this)" checked>
+                    <label for="drinking_water">Drinking Water</label><br>
+                    <input type="checkbox" id="fountain" onchange="changeChecked(this)" checked>
+                    <label for="fountain">Fountains</label><br>
+                    <input type="checkbox" id="fire_hydrant" onchange="changeChecked(this)" checked>
+                    <label for="fire_hydrant">Fire Hydrants</label><br>
+                    <input type="checkbox" id="dam" onchange="changeChecked(this)" checked>
+                    <label for="dam">Dams</label><br>
+                    <input type="checkbox" id="tap_water" onchange="changeChecked(this)" checked>
+                    <label for="tap_water">Water Taps</label><br>
+                    <input type="checkbox" id="water_tower" onchange="changeChecked(this)" checked>
+                    <label for="water_tower">Water Towers</label><br>
+                    <input type="checkbox" id="water_well" onchange="changeChecked(this)" checked>
+                    <label for="water_well">Water Wells</label><br>
+                    <input type="checkbox" id="water_works" onchange="changeChecked(this)" checked>
+                    <label for="water_works">Water Works</label><br>
+                </div>
             </div>
         </div>
     </div>
@@ -136,7 +153,7 @@
             option = splitQuery[1].split(']')[0]; //gets the part before the ] but after the =
             //console.log(option);
 			return new L.OverPassLayer({
-						minZoom: 15,
+						minZoom:  15,
 						query: query,
 						markerIcon: L.icon(option),
                         id: "OverPassLayer",
@@ -150,6 +167,7 @@
         var selectedObjects = [];
 
         function mapObjectGetter(objectName){
+            //console.log(selectedObjects);
             let query;
             switch(objectName){
                 case "drinking_water":
@@ -192,17 +210,24 @@
         selectedObjects.push(mapObjectGetter("water_tower"));
         selectedObjects.push(mapObjectGetter("water_well"));
         selectedObjects.push(mapObjectGetter("water_works"));
+        //selectedObjects.push(mapObjectGetter("sewage_plant"));
         selectedObjects.forEach(object => osmMap2.addLayer(object));
         
         function updateOverPassLayer(map){
             let whitelist = [];
 			map.eachLayer(function(layer){
+                //console.log(layer.options);
                 if(layer.options.id === "OverPassLayer"){
                     if(layer.options.minZoom > map.getZoom()){
                         map.removeLayer(layer);
                     }
                     else{
                         whitelist.push(layer.options.query);
+                    }
+                }
+                else if(15 > map.getZoom()){
+                    if(layer.options.icon != null){
+                        map.removeLayer(layer);
                     }
                 }
             });
@@ -213,6 +238,43 @@
                 }
             }
 	    }
+
+        function removeOverpassLayer(map, removeLayer){
+            map.eachLayer(function(layer){
+                //console.log(layer.options);
+                if(layer.options.id === "OverPassLayer" && layer.options.query == removeLayer.options.query){
+                    map.removeLayer(layer);
+                }
+            });
+        }
+
+        function changeChecked(element){
+            if(element.checked){
+                onCheck(element);
+            }
+            else{
+                onUnchecked(element);
+            }
+        }
+
+        function onCheck(element){
+            selectedObjects.push(mapObjectGetter(element.id));
+            updateOverPassLayer(osmMap2);
+        }
+
+        function onUnchecked(element){
+            console.log(selectedObjects);
+            let idx;
+            for(let i = 0; i < selectedObjects.length; i++){
+                if(mapObjectGetter(element.id).options.query == selectedObjects[i].options.query){
+                    idx = i;
+                    break;
+                }
+            }
+            selectedObjects.splice(idx,1);
+            removeOverpassLayer(osmMap2,mapObjectGetter(element.id));
+            console.log(selectedObjects);
+        }
         
         parent.addEventListener('updateMaps', function () {
             updateOverPassLayer(osmMap2);
