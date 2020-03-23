@@ -45,6 +45,7 @@ function setGlobalPosition(_view, mapNumber) {
     view = _view;
     updateMaps(mapNumber);
 }
+
 function setGlobalPositionFORCE(_view, mapNumber) {
     view = _view;
     updateMaps(mapNumber);
@@ -157,7 +158,7 @@ var loadCount = 0;
 function loaded(){
     loadCount++;
     if(loadCount >= 3){
-        console.log("Very loaded");
+        //console.log("Very loaded");
         document.getElementById("loadCover").style.display = "none";
     }
 }
