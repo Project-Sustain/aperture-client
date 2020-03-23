@@ -210,8 +210,9 @@
         selectedObjects.push(mapObjectGetter("water_tower"));
         selectedObjects.push(mapObjectGetter("water_well"));
         selectedObjects.push(mapObjectGetter("water_works"));
-        //selectedObjects.push(mapObjectGetter("sewage_plant"));
+        selectedObjects.push(mapObjectGetter("sewage_plant"));
         selectedObjects.forEach(object => osmMap2.addLayer(object));
+
         
         function updateOverPassLayer(map){
             let whitelist = [];
@@ -233,8 +234,10 @@
             });
             //console.log(whitelist);
             for(let i = 0; i < selectedObjects.length; i++){
+                //console.log(selectedObjects[i]);
                 if(selectedObjects[i].options.minZoom <= map.getZoom() && !whitelist.includes(selectedObjects[i].options.query)){
                     map.addLayer(selectedObjects[i]);
+                    //markers.addLayers(selectedObjects[i].);
                 }
             }
 	    }
@@ -263,7 +266,7 @@
         }
 
         function onUnchecked(element){
-            console.log(selectedObjects);
+            //console.log(selectedObjects);
             let idx;
             for(let i = 0; i < selectedObjects.length; i++){
                 if(mapObjectGetter(element.id).options.query == selectedObjects[i].options.query){
@@ -273,7 +276,7 @@
             }
             selectedObjects.splice(idx,1);
             removeOverpassLayer(osmMap2,mapObjectGetter(element.id));
-            console.log(selectedObjects);
+            //console.log(selectedObjects);
         }
         
         parent.addEventListener('updateMaps', function () {
