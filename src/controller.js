@@ -167,5 +167,6 @@ module.exports = {
     verifyCorrectMap: verifyCorrectMap,
     mouseDown: mouseDown,
     initializeMap: initializeMap,
-    mouseUp: mouseUp
+    mouseUp: mouseUp,
+    checkIfAnyCanMove: checkIfAnyCanMove
   }
