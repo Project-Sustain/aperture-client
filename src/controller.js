@@ -162,3 +162,10 @@ function loaded(){
         document.getElementById("loadCover").style.display = "none";
     }
 }
+
+module.exports = {
+    verifyCorrectMap: verifyCorrectMap,
+    mouseDown: mouseDown,
+    initializeMap: initializeMap,
+    mouseUp: mouseUp
+  }

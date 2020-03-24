@@ -164,8 +164,8 @@ function geohash_adjacent(geohash, direction) {
 
 
 module.exports = {
-  decode_geohash: decode_geohash,
-  encode_geohash: encode_geohash,
-  geohash_bounds: geohash_bounds,
-  geohash_adjacent: geohash_adjacent
+  verifyCorrectMap: verifyCorrectMap,
+  mouseDown: mouseDown,
+  initializeMap: initializeMap,
+  mouseUp: mouseUp
 }
