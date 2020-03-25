@@ -1,7 +1,7 @@
 var assert = require('assert');
 var jsdom = require('jsdom-global')();
 
-var map2 = require('../src/Iframe/testModules/map2')
+var map2 = require('../../../src/Iframe/testModules/map2')
 
 describe('mapObjectGetter()', function() {
     it('should return a layer with id OverPassLayer', function() {
