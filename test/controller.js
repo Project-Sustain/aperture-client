@@ -36,6 +36,7 @@ describe('checkIfAnyCanMove()', function() {
     it('should return true if no maps are being moved, false if any are moving', function() {
       controller.mouseUp(); //sets all to not moving
       assert.deepEqual(controller.checkIfAnyCanMove(), true);
+      controller.mouseDown(1);
       controller.initializeMap(1, true);
       assert.deepEqual(controller.checkIfAnyCanMove(), false);
     });
