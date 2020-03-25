@@ -289,9 +289,13 @@
         osmMap2.on("zoomend", function () {
             parent.setGlobalPositionFORCE(osmMap2.getCenter(),MAPNUMBER);
         }); 
+
+        module.exports = {
+            getNewOverPassLayer: getNewOverPassLayer,
+            mapObjectGetter: mapObjectGetter
+        }
     </script>
 
-    <script src="testModules/map2.js"></script>
 
     <!--You must add this map's setter function-->
     <script> 
