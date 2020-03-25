@@ -23,7 +23,6 @@ var sidebar = L.control.sidebar('sidebar', {
 
 
 L.icon = function (option) {
-    console.log("option: " + option);
     switch(option){
         case "drinking_water":
             return new L.Icon({
@@ -95,7 +94,6 @@ function getNewOverPassLayer(query){
 var selectedObjects = [];
 
 function mapObjectGetter(objectName){
-    //console.log(selectedObjects);
     let query;
     switch(objectName){
         case "drinking_water":
