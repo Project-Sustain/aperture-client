@@ -17,18 +17,21 @@
 .sidebar-tabs {
   top: 0;
   bottom: 0;
-  height: fit-content;
+  height: 35px;
   background-color: #fff; }
   .sidebar-left .sidebar-tabs {
-    left: 0; }
+    left: 0;
+    margin-top: 10px;
+    background-color: rgba(0,0,0,0); }
   .sidebar-right .sidebar-tabs {
-    right: 0; }
+    right: 0; 
+    margin-top: 10px;
+    background-color: rgba(0,0,0,0);}
   .sidebar-tabs, .sidebar-tabs > ul {
     position: absolute;
     width: 35px;
     margin: 0;
     padding: 0;
-    margin-top: 5px;
     list-style-type: none; }
     .sidebar-tabs > li, .sidebar-tabs > ul > li {
       width: 100%;
@@ -77,12 +80,12 @@
     left: 0px;
     top: 54px;
     border-radius: 3px;
-    height: fit-content;}
+    height: 201px;}
   .sidebar-right .sidebar-content {
     right: 0px;
     top: 54px;
     border-radius: 3px;
-    height: fit-content;}
+    height: 205px;}
   .sidebar.collapsed > .sidebar-content {
     overflow-y: hidden; 
     display: none;}
