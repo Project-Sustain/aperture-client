@@ -13,6 +13,9 @@
     <script type="text/javascript" src="https://cdn.rawgit.com/nezasa/iso8601-js-period/master/iso8601.min.js"></script>
     <script type="text/javascript" src="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.min.js"></script>
     <script type="text/javascript" src="Dependencies/moment.js"></script>
+    <script type="text/javascript" src="../display.js"></script>
+    <script type="text/javascript" src="Dependencies/Sketch_Visualization/grpc_querier.bundle.js"></script>
+    <script type="text/javascript" src="Dependencies/Sketch_Visualization/sketch_visualizer.js"></script>
     <link rel="stylesheet" type="text/css" href="IframeStyle.css">
 </head>
 <body>
@@ -26,15 +29,15 @@
     <div id='map1' class='map'></div>
     
     <script>
-        mymap = L.map('map1', {renderer: L.canvas(), minZoom: 3, 
+        const mymap = L.map('map1', {renderer: L.canvas(), minZoom: 3,
             fullscreenControl: true,
             timeDimension: true,
             inertia: false,
 			timeDimensionOptions: {
-        		    timeInterval: "2015-01-02T06:00/2015-01-31T00:00",
-        		    transitionTime: 0.1,
+        		    timeInterval: "2015-01-02T06:00:00Z/2015-01-31T18:00:00Z",
+        		    transitionTime: 10,
         		    period: "PT6H",
-                    currentTime: new Date("2015-01-02T06:00")},
+                    currentTime: new Date("2015-01-01T00:00:00Z")},
 			}
         );
         
@@ -44,39 +47,34 @@
 
         mymap.setView(window.parent.view, window.parent.zoomLevel);
 
-        L.timeDimension.layer.CustomTimeDimension = function(options) {
-            return new L.TimeDimension.Layer.CustomTimeDimension(options);
-        };
-
-        var tiles = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
                 attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                maxZoom: 18,
+                maxZoom: 8,
                 id: 'mapbox.streets',
                 accessToken: 'pk.eyJ1Ijoia2V2aW5icnVod2lsZXIiLCJhIjoiY2ptdjBuMzRiMGNzeTNwbm9sYml5aWhvcyJ9.i6hZMqiVZgDiyDj5zcFcIA',
             maxBounds: [[],[]]
         }).addTo(mymap);
 
-        td = L.timeDimension.layer.CustomTimeDimension({loadingTimeout: 1000000});
-        td.addTo(mymap);
+        td = L.timeDimension.layer.CustomTimeDimension({}, sketch_visualizer({
+            0.0: [0, 0, 255],
+            0.5: [0, 255, 0],
+            1.0: [255, 0, 0]
+        }));
 
         L.Control.TimeDimensionCustom = L.Control.TimeDimension.extend({
             _getDisplayDateFormat: function(date){
-                return date;
+                return moment.utc(date).format('HH:mm - MM/DD/YYYY (UTC)');
             }
         });
 
-        var timeDimensionControl = new L.Control.TimeDimensionCustom({
+        const timeDimensionControl = new L.Control.TimeDimensionCustom({
             autoPlay: false,
-            maxSpeed: 10,
-            playerOptions: {
-                buffer: 1,
-                minBufferReady: -1,
-                transitionTime: 100,	
-            },
+            maxSpeed: .5,
         });
-        mymap.addControl(this.timeDimensionControl);
-        td.addControlReference(timeDimensionControl);
 
+        mymap.addControl(timeDimensionControl);
+        td.addControlReference(timeDimensionControl);
+        td.addTo(mymap);
 
         mymap.on("move", function () {
             parent.setGlobalPosition(mymap.getCenter(),MAPNUMBER);
@@ -89,6 +87,8 @@
     <!--You must add this map's setter function-->
     <script> 
         var thisMapsSetter = function(view,zoom){
+            if(view.lng < 0)
+                view.lng += 360;
             mymap.setView(view, mymap.getZoom());
         }
         parent.setterFunctions.push({

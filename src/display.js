@@ -18,7 +18,7 @@ function decode_geohash(geohash) {
     lon = lon.toFixed(Math.floor(2-Math.log(lonMax-lonMin)/Math.LN10));
 
     return { lat: Number(lat), lon: Number(lon) };
-};
+}
 
 function encode_geohash(lat, lon, precision) {
     // infer precision?
@@ -27,7 +27,7 @@ function encode_geohash(lat, lon, precision) {
         for (var p=1; p<=12; p++) {
             var hash = encode_geohash(lat, lon, p);
             var posn = decode_geohash(hash);
-            if (posn.lat==lat && posn.lon==lon) return hash;
+            if (posn.lat===lat && posn.lon===lon) return hash;
         }
         precision = 12; // set to maximum
     }
@@ -70,7 +70,7 @@ function encode_geohash(lat, lon, precision) {
         }
         evenBit = !evenBit;
 
-        if (++bit == 5) {
+        if (++bit === 5) {
             // 5 bits gives us a character: append it and start over
             geohash += Geohash.base32.charAt(idx);
             bit = 0;
@@ -79,7 +79,7 @@ function encode_geohash(lat, lon, precision) {
     }
 
     return geohash;
-};
+}
 
 function geohash_bounds(geohash) {
     if (geohash.length === 0) throw new Error('Invalid geohash');
@@ -93,14 +93,14 @@ function geohash_bounds(geohash) {
     for (var i=0; i<geohash.length; i++) {
         var chr = geohash.charAt(i);
         var idx = Geohash.base32.indexOf(chr);
-        if (idx == -1) throw new Error('Invalid geohash');
+        if (idx === -1) throw new Error('Invalid geohash');
 
         for (var n=4; n>=0; n--) {
             var bitN = idx >> n & 1;
             if (evenBit) {
                 // longitude
                 var lonMid = (lonMin+lonMax) / 2;
-                if (bitN == 1) {
+                if (bitN === 1) {
                     lonMin = lonMid;
                 } else {
                     lonMax = lonMid;
@@ -108,7 +108,7 @@ function geohash_bounds(geohash) {
             } else {
                 // latitude
                 var latMid = (latMin+latMax) / 2;
-                if (bitN == 1) {
+                if (bitN === 1) {
                     latMin = latMid;
                 } else {
                     latMax = latMid;
@@ -118,13 +118,11 @@ function geohash_bounds(geohash) {
         }
     }
 
-    var bounds = {
+    return {
         sw: { lat: latMin, lon: lonMin },
         ne: { lat: latMax, lon: lonMax },
     };
-
-    return bounds;
-};
+}
 
 function geohash_adjacent(geohash, direction) {
     // based on github.com/davetroy/geohash-js
@@ -133,7 +131,7 @@ function geohash_adjacent(geohash, direction) {
     direction = direction.toLowerCase();
 
     if (geohash.length === 0) throw new Error('Invalid geohash');
-    if ('nsew'.indexOf(direction) == -1) throw new Error('Invalid direction');
+    if ('nsew'.indexOf(direction) === -1) throw new Error('Invalid direction');
 
     var neighbour = {
         n: [ 'p0r21436x8zb9dcf5h7kjnmqesgutwvy', 'bc01fg45238967deuvhjyznpkmstqrwx' ],
@@ -154,18 +152,19 @@ function geohash_adjacent(geohash, direction) {
     var type = geohash.length % 2;
 
     // check for edge-cases which don't share common prefix
-    if (border[direction][type].indexOf(lastCh) != -1 && parent !== '') {
+    if (border[direction][type].indexOf(lastCh) !== -1 && parent !== '') {
         parent = geohash_adjacent(parent, direction);
     }
 
     // append letter for direction to parent
     return parent + Geohash.base32.charAt(neighbour[direction][type].indexOf(lastCh));
-};
-
-
-module.exports = {
-    decode_geohash: decode_geohash,
-    encode_geohash: encode_geohash,
-    geohash_bounds: geohash_bounds,
-    geohash_adjacent: geohash_adjacent
 }
+
+try {
+    module.exports = {
+        decode_geohash: decode_geohash,
+        encode_geohash: encode_geohash,
+        geohash_bounds: geohash_bounds,
+        geohash_adjacent: geohash_adjacent
+    };
+} catch(e) { }

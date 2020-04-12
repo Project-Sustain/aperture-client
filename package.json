@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack",
     "watch": "webpack --watch --config webpack.config.js",
-    "serve": "npm run watch & live-server",
+    "serve": "./src/Iframe/Dependencies/Sketch_Visualization/getenvoy run standard:1.13.1 -- --config-path ./src/Iframe/Dependencies/Sketch_Visualization/envoy.yaml & npm run watch & live-server --ignore='**/node_modules/**'",
     "test": "mocha --recursive -r jsdom-global/register",
     "coverage": "nyc --reporter=lcov mocha"
   },
@@ -22,9 +22,15 @@
   },
   "homepage": "https://github.com/Project-Sustain/aperture-client#readme",
   "dependencies": {
+    "browserify": "^16.5.0",
+    "browserify-fs": "^1.0.0",
     "canvas": "^2.6.1",
     "create-react-app": "^2.1.1",
     "d3": "^5.7.0",
+    "fs": "0.0.1-security",
+    "google-protobuf": "^3.11.4",
+    "grpc": "^1.24.2",
+    "grpc-web": "^1.0.7",
     "jquery": "^3.4.1",
     "jsdom-global": "^3.0.2",
     "leaflet-overpass-layer": "^2.8.3",

@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "sustain.synopsis.dht.store.services";
+
+service TargetedQueryService {
+    rpc Query (TargetQueryRequest) returns (stream TargetQueryResponse);
+}
+
+message TargetQueryRequest {
+    string dataset = 1;
+    // spatial scope is defines using a list of geohashes
+    repeated Predicate spatialScope = 2;
+    Expression temporalScope = 3;
+    repeated Expression featurePredicates = 4;
+    repeated Expression metadataPredicates = 5;
+}
+
+// a single response message may pack zero or more strands
+message TargetQueryResponse {
+    repeated ProtoBuffSerializedStrand strands = 1;
+}
+
+// a matching strand for a given query
+message ProtoBuffSerializedStrand {
+    string geohash = 1;
+    // start timestamp as an epoch - endTS can be derived by referring to the schema
+    int64 startTS = 2;
+    // feature values - can be discretized values or the original values as explained below
+    repeated double features = 3;
+    // Number of observations
+    int64 observationCount = 4;
+    // Serialized data container
+    // As an optimization, data container fields are set only if the observationCount > 1.
+    // The consumer should always check the observationCount before accessing the data container fields.
+    // If observationCount == 1, then features will not be discretized and data container fields can be derived from
+    // the features. In this case, the strand represents a single observation.
+    // If observationCount > 1, then features will be discretized and data container fields will be set. In this case
+    // the strand represents an aggregation of multiple observations.
+    repeated double mean = 5;
+    repeated double m2 = 6;
+    repeated double min = 7;
+    repeated double max = 8;
+    repeated double s2 = 9;
+}
+
+// predicates are combined using combine operators to form expressions
+message Expression {
+    enum CombineOperator {
+        AND = 0;
+        OR = 1;
+        DIFF = 2;
+    }
+    oneof First {
+        Expression expression1 = 1;
+        Predicate predicate1 = 2;
+    }
+    CombineOperator combineOp = 3;
+    oneof Second {
+        Expression expression2 = 4;
+        Predicate predicate2 = 5;
+    }
+}
+
+// finest-grain condition that defines a query scope
+message Predicate {
+    enum ComparisonOperator {
+        EQUAL = 0;
+        GREATER_THAN = 1;
+        LESS_THAN = 2;
+        GREATER_THAN_OR_EQUAL = 3;
+        LESS_THAN_OR_EQUAL = 4;
+    }
+    string attribute = 1;
+    ComparisonOperator comparisonOp = 2;
+    oneof value {
+        string stringValue = 3;
+        sint64 integerValue = 4;
+        double doubleValue = 5;
+    }
+}
+
