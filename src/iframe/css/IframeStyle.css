@@ -220,3 +220,35 @@ body {
 .leaflet-fade-anim .leaflet-tile, .leaflet-zoom-anim .leaflet-zoom-animated {
     will-change: auto !important;
 }
+
+.overlay {
+    width: 100px;
+    background: white;
+    height: 100px;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    z-index: 9999;
+}
+
+.overlay .box{
+    width: 100%;
+    height: 100%;
+    border: 3px solid #4286f4;
+    box-sizing: border-box;
+}
+
+.overlay .box .resizer{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #4286f4;
+    position: absolute;
+}
+
+.overlay .box .resizer.top-right {
+    right: -5px;
+    top: -5px;
+    cursor: nesw-resize;
+}
