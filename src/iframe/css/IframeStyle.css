@@ -32,55 +32,18 @@ body {
     color: #333;
 }
 
-#main {
-  position: absolute;
-  z-index: 2000;
-  padding: 16px;
-}
-
-.sidebar {
-  background-color: #f1f1f1;
-  opacity: 0.85;
-  z-index: 2001;
-  height: 100%;
-  width: 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  overflow-x: hidden;
-  transition: 0.7s;
-  max-width: 870px;
-}
-
-.sidebar a {
-  color: #212121;
-  padding: 8px 8px 8px 32px;
-  text-decoration: none;
-  font-size: 19px;
-  display: block;
-  transition: 0.3s;
-}
-
-.nav-tabs {
-  top: 0;
-  margin: auto;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin-bottom: 20px;
-  padding: 15px;
-}
-
 .menuColumn {
-    background-color: #f1f1f1;
-    color: #111;
+    margin: 10px;
+    background-color: #DDD;
+    color: black;
+    border-radius: 3px;
     height: 100%;
-    margin: 2px;
 }
 
 .menuColumn .categoryName {
-    background-color: #f1f1f1;
-    color: #111;
+    border-radius: 3px;
+    background-color: #0074d9;
+    color: white;
     position: relative;
     top: 0;
     width: 100%;
@@ -88,95 +51,34 @@ body {
 }
 
 .menuColumn .categoryName .titleText{
-    border-bottom-style: solid;
-    border-bottom-width: thin;
-    padding: 5px;
     width:100%;
-    font-size: 22px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
 }
 
 .menuHeader{
-    padding: 10px;
-    background-color: #f1f1f1;
+    margin: 10px;
+    margin-bottom: 15px;
+    padding: 0;
+    border-radius: 3px;
+    background-color: white;
 }
 
 .menuHeaderLabel{
-    border-bottom-style: dashed;
-    border-bottom-width: thin;
-    padding-top: 10px;
-    font-size: 18px;
-    background-color: #f1f1f1;
-    color: #111;
+    padding: 5px;
+    border-radius: 3px;
+    background-color: #0074d9;
+    text-align: center;
+    color:white;
+    font-weight: bold;
     cursor: pointer;
 }
 
-.content-section {
-  background-color: #fbfbfb;
-  color: #414141;
-  transition: 0.5s;
-  margin: 10px;
-  border: 1px solid #dddddd;
-  border-radius: 3px;
-  max-height: 18vh;
-  overflow-y: auto;
-}
-
-.slider-individual {
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-}
-
-.slider-section {
-  padding: 10px;
-}
-
-.slider-title {
-  font-size: 15px;
-  text-align: left;
-  padding-bottom: 5px;
-}
-
-.checkbox-section {
-  padding-left: 10px;
-  padding-right: 10px;
-}
-
-.checkbox-section-label {
-  font-size: 17px;
-  text-align: left;
-  padding-bottom: 5px;
-  padding-top: 3px;
-  padding-left: 10px;
-  border-bottom-style: solid;
-  border-bottom-width: thin;
-}
-
-.checkbox-section-options {
-  padding: 10px;
-  font-size: 14px;
-  text-align: left;
-}
-
-.checkbox-section-title {
-  padding-left: 8px;
-}
-
-.modal-popout {
-  padding: 10px;
-}
-
-.sidebar .closebtn {
-  position: absolute;
-  top: 0;
-  right: 25px;
-  font-size: 36px;
-  margin-left: 50px;
-}
 
 .checkboxConstraintLabel{
     padding: 5px;
+    border-radius: 3px;
     background-color: #0074d9;
     text-align: left;
     color:white;
@@ -184,7 +86,6 @@ body {
 
 .checkboxConstraintContainer{
     padding: 5px;
-    padding-bottom: 2px;
 }
 
 
@@ -193,23 +94,24 @@ body {
 }
 
 .layerContainer{
-    background-color: #ddd;
+    background-color: #DDD;
     margin: 5px;
+    margin-bottom: 10px;
     padding: 0;
+    border-radius: 3px;
     cursor: default;
 }
 
 .layerSelector{
-    color: #111;
-    background-color: #f1f1f1;
-    padding: 8px;
+    font-weight: bold;
+    color:white;
+    background-color: #42b33e;
+    padding: 5px;
+    border-radius: 3px;
 }
 
 .layerConstraints{
-    overflow-y: auto;
-    max-height: 45vh;
     padding: 10px;
-    background-color: #ffffff;
 }
 
 .checkboxContainer{
@@ -225,16 +127,11 @@ body {
     margin-bottom: 15px;
 }
 
-.checkbox-for-layer {
-    float: right;
-    margin-top: 5px;
-}
-
-.dropdown-arrow {
-    cursor: pointer;
-    margin-left: 5px;
+.dropdown{
     height: 18px;
     width: 18px;
+    float: right;
+    margin-right: 7px;
 }
 
 .collapsible, .attributionContainer, #clearFeatures {
@@ -282,43 +179,34 @@ body {
 }
 
 .editConstraints{
-    opacity: 0.85;
     position: absolute;
     top:12.5%;
-    right:12.5%;
-    border: 1px solid #dddddd;
-    border-radius: 6px;
-    background-color: #f8f8f8;
+    left:12.5%;
+    width: 75%;
+    height: 75%;
+    border-radius: 3px;
+    background-color: white;
     z-index: 9999;
-    padding: 10px;
-    max-width: 40vw;
-    max-height: 60vh;
-    min-width: 20vw;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .editConstraintsHeader{
     top:0;
     padding: 10px;
-    color: #111;
-    font-size: 20px;
+    background-color:#0074d9;
+    color:white;
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
     width: 100%;
-}
-
-.editConstraintArea {
-    overflow: auto;
-    max-height: 40vh;
-    border: 1px solid #dddddd;
-    border-radius: 3px;
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    padding-top: 10px;
-    background-color: #f1f1f1;
+    margin-bottom: 8px;
 }
 
 .editConstraintsConstraint{
     padding: 1px;
     padding-left: 20px;
+    font-weight: bold;
 }
 
 
@@ -327,13 +215,6 @@ body {
     left: 85%;
     position: sticky;
 
-}
-
-.constraintCloseButton {
-  padding: 10px;
-}
-
-.constraintCheckbox {
 }
 
 .leaflet-fade-anim .leaflet-tile, .leaflet-zoom-anim .leaflet-zoom-animated {
@@ -367,31 +248,4 @@ body {
     right: -5px;
     top: -5px;
     cursor: nesw-resize;
-}
-
-.tool-tip {
-    cursor: pointer;
-    height: 18px;
-    width: 18px;
-    float: right;
-    margin-top: 2px;
-    margin-right: 15px;
-}
-
-.graph-pic {
-  cursor: pointer;
-  height: 25px;
-  width: 25px;
-  margin: 15px;
-  margin-left: 30px;
-}
-
-.graph-button-pic {
-  height: 25px;
-  width: 25px;
-}
-
-.close-button-pic {
-  height: 25px;
-  width: 25px;
 }

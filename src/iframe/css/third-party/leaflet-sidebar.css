@@ -25,6 +25,7 @@
   bottom: 0;
   height: 35px;
   background-color: #fff;
+  z-index: 9999;
 }
 
 .sidebar-left .sidebar-tabs {
@@ -38,7 +39,7 @@
   margin-top: 10px;
   margin-right: 10px;
   background-color: rgba(0, 0, 0, 0);
-  z-index: 1;
+
 }
 
 .sidebar-tabs, .sidebar-tabs>ul {
@@ -120,6 +121,7 @@
   margin-right: 10px;
   margin-left: 10px;
   width: 850px;
+  z-index: 9999;
 }
 
 .sidebar.collapsed>.sidebar-content {
