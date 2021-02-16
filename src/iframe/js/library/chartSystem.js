@@ -6,7 +6,7 @@ class ChartSystem {
         this.map = map;
 
         this.chart = new BarChart([], 1000, 300);
-        this.resizable = new resizable(1000, 300, "white");
+        //this.resizable = new resizable(1000, 300, "white");
         this.resizable.addChart(this.chart);
 
         $.getJSON(chartCatalogeFilename, (catalog) => {
