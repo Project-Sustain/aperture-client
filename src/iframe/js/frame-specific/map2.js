@@ -8,6 +8,12 @@ if (DEV) {
     AutoQuery.minCountyZoom = 1;
     AutoQuery.minTractZoom = 1;
 }
+const makePersistent = async () => {
+    if (navigator.storage && navigator.storage.persist) {
+        const isPersisted = await navigator.storage.persist();
+    }
+}
+makePersistent();
 
 //--------------
 const standardTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
