@@ -144,6 +144,10 @@ function createChartControl(graphBox) {
 	chartControl.appendChild(chartDropdown);
 	graphBox.appendChild(chartControl);
 
+	let leftToggle = document.createElement("button");
+	leftToggle.className = "btn btn-outline-dark";
+	leftToggle.innerHTML = "<img src='../../images/LeftToggle.png' class='left-toggle'";
+
 	let closeButton = document.createElement("button");
 	closeButton.type = "button";
 	closeButton.className = "btn btn-outline-dark";

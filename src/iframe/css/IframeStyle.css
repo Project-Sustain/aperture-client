@@ -37,6 +37,11 @@
   flex-direction: row;*/
 }
 
+.left-toggle {
+    height: 15px;
+    width: 15px;
+}
+
 .temp-chart-box {
   padding: 10px;
   margin: 10px;
