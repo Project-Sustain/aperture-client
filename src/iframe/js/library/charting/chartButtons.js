@@ -130,10 +130,20 @@ function createChartControl(graphBox) {
 	let chartControl = document.createElement("div");
 	chartControl.className = "chart-control";
 
+	let chartControlGroup = document.createElement("div");
+	chartControlGroup.className = "btn-group";
+	chartControlGroup.role = "group";
+
+	let leftToggle = document.createElement("button");
+	leftToggle.className = "btn btn-outline-dark";
+	leftToggle.type = "button";
+	leftToggle.innerText = "<";
+
 	let chartDropdown = document.createElement("div");
-	chartDropdown.className = "dropdown";
+	chartDropdown.className = "btn-group";
+	chartDropdown.role = "group";
 	chartDropdown.innerHTML = 
-		"<button class='btn btn-outline-dark dropdown-toggle' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>\
+		"<button type='button' class='btn btn-outline-dark dropdown-toggle' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>\
 			Constraint\
 		</button>\
 		<div class='dropdown-menu' aria-labelledby='dropdownMenuButton'>\
@@ -141,19 +151,11 @@ function createChartControl(graphBox) {
 			<a class='dropdown-item' href='#'>Constraint 2</a>\
 			<a class='dropdown-item' href='#'>Constraint 3</a>\
 		</div>";
-	chartControl.appendChild(chartDropdown);
-	graphBox.appendChild(chartControl);
 
-	// let leftToggle = document.createElement("button");
-	// leftToggle.className = "btn btn-outline-dark";
-	// leftToggle.innerHTML = "<img src='../../images/LeftToggle.png' class='left-toggle'";
-	//
-	// let rightToggle = document.createElement("button");
-	// rightToggle.className = "btn btn-outline-dark";
-	// rightToggle.innerHTML = "<img src='../../images/RightToggle.png' class='left-toggle'";
-	//
-	// chartControl.appendChild(leftToggle);
-	// chartControl.appendChild(rightToggle);
+	let rightToggle = document.createElement("button");
+	rightToggle.className = "btn btn-outline-dark";
+	rightToggle.type = "button";
+	rightToggle.innerText = ">";
 
 	let closeButton = document.createElement("button");
 	closeButton.type = "button";
@@ -163,8 +165,14 @@ function createChartControl(graphBox) {
 		totalGraphs--;
 		checkNumberOfGraphs();
 	});
-	closeButton.innerText = "Close Graph";
-	chartControl.appendChild(closeButton);
+	closeButton.innerText = "Close";
+
+	chartControlGroup.appendChild(leftToggle);
+	chartControlGroup.appendChild(chartDropdown);
+	chartControlGroup.appendChild(rightToggle);
+	chartControlGroup.appendChild(closeButton);
+	chartControl.appendChild(chartControlGroup);
+	graphBox.appendChild(chartControl);
 
 	return chartControl;
 }
