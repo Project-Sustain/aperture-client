@@ -55,6 +55,8 @@ map.addLayer(markers);
 const backgroundTract = new GeometryLoader("tract_geo_GISJOIN", window.map, 300);
 const backgroundCounty = new GeometryLoader("county_geo_GISJOIN", window.map, 50);
 
+const chartSystem = new ChartSystem(map, "json/graphPriority.json");
+
 window.backgroundTract = backgroundTract;
 window.backgroundCounty = backgroundCounty
 

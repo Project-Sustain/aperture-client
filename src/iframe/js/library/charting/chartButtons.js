@@ -1,4 +1,3 @@
-const chartSystem = new ChartSystem(map, "json/graphPriority.json");
 document.getElementById('nav-graph-button').addEventListener('click', showGraph);
 let buttonsOn = false;
 let maxGraphs = 4;
@@ -54,11 +53,11 @@ function makeButtonsWork() {
 
 function createHistogram() {
 	moreGraphsPossible();
-	let box1 = document.getElementById("box1");
+	// let box1 = document.getElementById("box1");
 
 	let graphBox = document.createElement("div");
 	graphBox.className = "colorMode1 customBorder temp-chart-box";
-	graphBox.appendChild(createChartControl(graphBox));
+	graphBox.appendChild(createChartControl(graphBox, 'histogram'));
 
 	let chart = chartSystem.getChartFrame(ChartingType.HISTOGRAM);
 	graphBox.appendChild(chart.getDOMNode());
@@ -87,7 +86,7 @@ function createScatterplot() {
 
 	let graphBox = document.createElement("div");
 	graphBox.className = "colorMode1 customBorder temp-chart-box";
-	graphBox.appendChild(createChartControl(graphBox));
+	graphBox.appendChild(createChartControl(graphBox, 'scatterplot'));
 
 	let chart = chartSystem.getChartFrame(ChartingType.SCATTERPLOT);
 	graphBox.appendChild(chart.getDOMNode());
@@ -101,63 +100,12 @@ function createLinegraph() {
 
 	let graphBox = document.createElement("div");
 	graphBox.className = "colorMode1 customBorder temp-chart-box";
-  	graphBox.appendChild(createChartControl(graphBox));
+  	graphBox.appendChild(createChartControl(graphBox, 'linegraph'));
 
   	let chart = chartSystem.getChartFrame(ChartingType.LINEGRAPH);
 	graphBox.appendChild(chart.getDOMNode());
 	box1.appendChild(graphBox);
 }
-
-// function createChartControl(graphBox) {
-// 	let chartControl = document.createElement("div");
-// 	chartControl.className = "chart-control";
-//
-// 	let chartControlGroup = document.createElement("div");
-// 	chartControlGroup.className = "btn-group";
-// 	chartControlGroup.role = "group";
-//
-// 	let leftToggle = document.createElement("button");
-// 	leftToggle.className = "btn btn-outline-dark";
-// 	leftToggle.type = "button";
-// 	leftToggle.innerText = "<";
-//
-// 	let chartDropdown = document.createElement("div");
-// 	chartDropdown.className = "btn-group";
-// 	chartDropdown.role = "group";
-// 	chartDropdown.innerHTML =
-// 		"<button type='button' class='btn btn-outline-dark dropdown-toggle' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>\
-// 			Variable\
-// 		</button>\
-// 		<div class='dropdown-menu' aria-labelledby='dropdownMenuButton'>\
-// 			<a class='dropdown-item' href='#'>Constraint 1</a>\
-// 			<a class='dropdown-item' href='#'>Constraint 2</a>\
-// 			<a class='dropdown-item' href='#'>Constraint 3</a>\
-// 		</div>";
-//
-// 	let rightToggle = document.createElement("button");
-// 	rightToggle.className = "btn btn-outline-dark";
-// 	rightToggle.type = "button";
-// 	rightToggle.innerText = ">";
-//
-// 	let closeButton = document.createElement("button");
-// 	closeButton.type = "button";
-// 	closeButton.className = "btn btn-outline-dark";
-// 	closeButton.addEventListener('click', function() {
-// 		box1.removeChild(graphBox);
-// 		totalGraphs--;
-// 		checkNumberOfGraphs();
-// 	});
-// 	closeButton.innerText = "Close";
-//
-// 	chartControlGroup.appendChild(leftToggle);
-// 	chartControlGroup.appendChild(chartDropdown);
-// 	chartControlGroup.appendChild(rightToggle);
-// 	chartControlGroup.appendChild(closeButton);
-// 	chartControl.appendChild(chartControlGroup);
-// 	graphBox.appendChild(chartControl);
-//
-// 	return chartControl;
-// }
 
 function moreGraphsPossible() {
 	totalGraphs++;
