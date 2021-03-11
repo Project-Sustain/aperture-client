@@ -144,9 +144,16 @@ function createChartControl(graphBox) {
 	chartControl.appendChild(chartDropdown);
 	graphBox.appendChild(chartControl);
 
-	let leftToggle = document.createElement("button");
-	leftToggle.className = "btn btn-outline-dark";
-	leftToggle.innerHTML = "<img src='../../images/LeftToggle.png' class='left-toggle'";
+	// let leftToggle = document.createElement("button");
+	// leftToggle.className = "btn btn-outline-dark";
+	// leftToggle.innerHTML = "<img src='../../images/LeftToggle.png' class='left-toggle'";
+	//
+	// let rightToggle = document.createElement("button");
+	// rightToggle.className = "btn btn-outline-dark";
+	// rightToggle.innerHTML = "<img src='../../images/RightToggle.png' class='left-toggle'";
+	//
+	// chartControl.appendChild(leftToggle);
+	// chartControl.appendChild(rightToggle);
 
 	let closeButton = document.createElement("button");
 	closeButton.type = "button";
