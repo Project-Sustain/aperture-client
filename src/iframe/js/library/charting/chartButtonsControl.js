@@ -11,23 +11,18 @@ function createChartControl(graphBox, type) {
 
 function chartControlFor1Var(graphBox) {
     let chartControl = createChartControlArea();
-
     chartControl.appendChild(createChartControlGroup("Constraint"));
     chartControl.appendChild(createCloseButton(graphBox));
     graphBox.appendChild(chartControl);
-
     return chartControl;
 }
 
 function chartControlFor2Vars(graphBox) {
     let chartControl = createChartControlArea();
-
     chartControl.appendChild(createChartControlGroup("X-Axis"));
     chartControl.appendChild(createChartControlGroup("Y-Axis"));
-
     chartControl.appendChild(createCloseButton(graphBox));
     graphBox.appendChild(chartControl);
-
     return chartControl;
 }
 
@@ -41,15 +36,12 @@ function createChartControlGroup(dropdownTitle) {
     let chartControlGroup = document.createElement("div");
     chartControlGroup.className = "btn-group";
     chartControlGroup.role = "group";
-
-    let leftToggle = createLeftToggle();
+    let leftToggle = createSideToggle("<");
     let chartDropdown = createDropdown(dropdownTitle);
-    let rightToggle = createRightToggle();
-
+    let rightToggle = createSideToggle(">");
     chartControlGroup.appendChild(leftToggle);
     chartControlGroup.appendChild(chartDropdown);
     chartControlGroup.appendChild(rightToggle);
-
     return chartControlGroup;
 }
 
@@ -66,28 +58,21 @@ function createCloseButton(graphBox) {
     return closeButton;
 }
 
-function createRightToggle() {
+function createSideToggle(arrowDirection) {
     let rightToggle = document.createElement("button");
     rightToggle.className = "btn btn-outline-dark";
     rightToggle.type = "button";
-    rightToggle.innerText = ">";
+    rightToggle.innerText = arrowDirection;
     return rightToggle;
-}
-function createLeftToggle() {
-    let leftToggle = document.createElement("button");
-    leftToggle.className = "btn btn-outline-dark";
-    leftToggle.type = "button";
-    leftToggle.innerText = "<";
-    return leftToggle;
 }
 
 function createDropdown(title) {
     let chartDropdown = document.createElement("div");
     chartDropdown.className = "btn-group";
     chartDropdown.role = "group";
-    let firstPart = "<button type='button' class='btn btn-outline-dark dropdown-toggle' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'> ";
+    let firstPart = "<button type='button' class='btn btn-outline-dark dropdown-toggle' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>";
     let namePart = title;
-    let lastPart = " </button> <div class='dropdown-menu' aria-labelledby='dropdownMenuButton'>\
+    let lastPart = "</button> <div class='dropdown-menu' aria-labelledby='dropdownMenuButton'>\
             <a class='dropdown-item' href='#'>Constraint 1</a>\
             <a class='dropdown-item' href='#'>Constraint 2</a>\
             <a class='dropdown-item' href='#'>Constraint 3</a>\
