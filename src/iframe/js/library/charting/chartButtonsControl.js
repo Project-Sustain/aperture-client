@@ -4,71 +4,53 @@ function createChartControl(graphBox, type) {
     if(type == 'scatterplot') {
         return chartControlFor2Vars(graphBox);
     }
-    else {
+    else if (type == 'histogram' || type == 'linegraph'){
         return chartControlFor1Var(graphBox);
     }
 }
 
 function chartControlFor1Var(graphBox) {
-    let chartControl = document.createElement("div");
-    chartControl.className = "chart-control";
+    let chartControl = createChartControlArea();
 
-    let chartControlGroup = document.createElement("div");
-    chartControlGroup.className = "btn-group";
-    chartControlGroup.role = "group";
-
-    let leftToggle = createLeftToggle();
-    let chartDropdown = createDropdown("Constraint");
-    let rightToggle = createRightToggle();
-
-    let closeButton = createCloseButton(graphBox);
-
-    chartControlGroup.appendChild(leftToggle);
-    chartControlGroup.appendChild(chartDropdown);
-    chartControlGroup.appendChild(rightToggle);
-    chartControl.appendChild(chartControlGroup);
-    chartControl.appendChild(closeButton);
+    chartControl.appendChild(createChartControlGroup("Constraint"));
+    chartControl.appendChild(createCloseButton(graphBox));
     graphBox.appendChild(chartControl);
 
     return chartControl;
 }
 
 function chartControlFor2Vars(graphBox) {
+    let chartControl = createChartControlArea();
+
+    chartControl.appendChild(createChartControlGroup("X-Axis"));
+    chartControl.appendChild(createChartControlGroup("Y-Axis"));
+
+    chartControl.appendChild(createCloseButton(graphBox));
+    graphBox.appendChild(chartControl);
+
+    return chartControl;
+}
+
+function createChartControlArea() {
     let chartControl = document.createElement("div");
     chartControl.className = "chart-control";
+    return chartControl;
+}
 
+function createChartControlGroup(dropdownTitle) {
     let chartControlGroup = document.createElement("div");
     chartControlGroup.className = "btn-group";
     chartControlGroup.role = "group";
 
-    let chartControlGroup2 = document.createElement("div");
-    chartControlGroup2.className = "btn-group";
-    chartControlGroup2.role = "group";
-
     let leftToggle = createLeftToggle();
-    let chartDropdown = createDropdown("X-Axis");
+    let chartDropdown = createDropdown(dropdownTitle);
     let rightToggle = createRightToggle();
-
-    let leftToggle2 = createLeftToggle();
-    let chartDropdown2 = createDropdown("Y-Axis");
-    let rightToggle2 = createRightToggle();
-
-    let closeButton = createCloseButton(graphBox);
 
     chartControlGroup.appendChild(leftToggle);
     chartControlGroup.appendChild(chartDropdown);
     chartControlGroup.appendChild(rightToggle);
 
-    chartControlGroup2.appendChild(leftToggle2);
-    chartControlGroup2.appendChild(chartDropdown2);
-    chartControlGroup2.appendChild(rightToggle2);
-
-    chartControl.appendChild(chartControlGroup);
-    chartControl.appendChild(chartControlGroup2);
-    chartControl.appendChild(closeButton);
-    graphBox.appendChild(chartControl);
-
-    return chartControl;
+    return chartControlGroup;
 }
 
 function createCloseButton(graphBox) {
