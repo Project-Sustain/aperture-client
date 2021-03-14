@@ -22,7 +22,7 @@ class SingleChartArea {
         this.toggleAxisButton = document.createElement("div");
         this.toggleAxisButton.className = "btn btn-outline-dark btn-xs";
         this.toggleAxisButton.innerText = "Cycle X-Axis";
-        this.container.appendChild(this.toggleAxisButton);
+        // this.container.appendChild(this.toggleAxisButton);
             
         this.parentNode.appendChild(this.container);
     }

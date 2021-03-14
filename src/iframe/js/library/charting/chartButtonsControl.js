@@ -34,7 +34,7 @@ function createChartControlArea() {
 
 function createChartControlGroup(dropdownTitle) {
     let chartControlGroup = document.createElement("div");
-    chartControlGroup.className = "btn-group";
+    chartControlGroup.className = "btn-group chart-control-button";
     chartControlGroup.role = "group";
     let leftToggle = createSideToggle("<");
     let chartDropdown = createDropdown(dropdownTitle);
@@ -48,7 +48,7 @@ function createChartControlGroup(dropdownTitle) {
 function createCloseButton(graphBox) {
     let closeButton = document.createElement("button");
     closeButton.type = "button";
-    closeButton.className = "btn btn-outline-dark";
+    closeButton.className = "btn btn-outline-dark chart-control-button-close";
     closeButton.addEventListener('click', function() {
         box1.removeChild(graphBox);
         totalGraphs--;
@@ -59,11 +59,11 @@ function createCloseButton(graphBox) {
 }
 
 function createSideToggle(arrowDirection) {
-    let rightToggle = document.createElement("button");
-    rightToggle.className = "btn btn-outline-dark";
-    rightToggle.type = "button";
-    rightToggle.innerText = arrowDirection;
-    return rightToggle;
+    let sideToggle = document.createElement("button");
+    sideToggle.className = "btn btn-outline-dark";
+    sideToggle.type = "button";
+    sideToggle.innerText = arrowDirection;
+    return sideToggle;
 }
 
 function createDropdown(title) {

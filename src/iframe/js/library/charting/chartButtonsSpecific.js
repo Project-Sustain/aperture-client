@@ -6,7 +6,7 @@ function createHistogram() {
 	moreGraphsPossible();
 
 	let graphBox = document.createElement("div");
-	graphBox.className = "colorMode1 customBorder temp-chart-box";
+	graphBox.className = "colorMode1 customBorder single-chart-box";
 	graphBox.appendChild(createChartControl(graphBox, 'histogram'));
 
 	let chart = chartSystem.getChartFrame(ChartingType.HISTOGRAM);
@@ -35,7 +35,7 @@ function createScatterplot() {
 	let box1 = document.getElementById("box1");
 
 	let graphBox = document.createElement("div");
-	graphBox.className = "colorMode1 customBorder temp-chart-box";
+	graphBox.className = "colorMode1 customBorder single-chart-box";
 	graphBox.appendChild(createChartControl(graphBox, 'scatterplot'));
 
 	let chart = chartSystem.getChartFrame(ChartingType.SCATTERPLOT);
@@ -49,7 +49,7 @@ function createLinegraph() {
 	let box1 = document.getElementById("box1");
 
 	let graphBox = document.createElement("div");
-	graphBox.className = "colorMode1 customBorder temp-chart-box";
+	graphBox.className = "colorMode1 customBorder single-chart-box";
   	graphBox.appendChild(createChartControl(graphBox, 'linegraph'));
 
   	let chart = chartSystem.getChartFrame(ChartingType.LINEGRAPH);
