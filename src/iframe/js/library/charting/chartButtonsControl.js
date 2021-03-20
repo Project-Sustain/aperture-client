@@ -35,7 +35,7 @@ function createChartControlArea() {
 function createChartControlGroup(dropdownTitle) {
     let chartControlGroup = document.createElement("div");
     chartControlGroup.className = "btn-group chart-control-button";
-    chartControlGroup.role = "group";
+    chartControlGroup.setAttribute("role", "group");
     let leftToggle = createSideToggle("<");
     let chartDropdown = createDropdown(dropdownTitle);
     let rightToggle = createSideToggle(">");
