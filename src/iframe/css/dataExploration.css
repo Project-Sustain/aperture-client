@@ -95,7 +95,7 @@ body {
 
 .content-section {
   margin: 10px;
-  max-height: 30vh;
+  max-height: 50vh;
   overflow-y: auto;
 }
 
@@ -186,7 +186,7 @@ body {
 
 .layerConstraints{
     overflow-y: auto;
-    max-height: 45vh;
+    max-height: 90vh;
     padding: 10px;
 }
 
