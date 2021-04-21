@@ -1,6 +1,6 @@
 import React, { Component, useEffect, useState } from 'react';
-import { Button } from 'reactstrap';
-import currentLocationIcon from '../../../images/current-location.svg';
+import { Button, NavLink} from 'reactstrap';
+import currentLocationIcon from '../../../images/current-location.png';
 
 function goToLocation(pos, map) {
     map.flyTo({
@@ -10,7 +10,7 @@ function goToLocation(pos, map) {
 }
 
 export default function CurrentLocation(props) {
-    return <Button outline color={"dark"} className={"currentLocationButton"} onClick={() => {
+    return <Button color="link" className={"currentLocationButton"} onClick={() => {
         navigator.geolocation.getCurrentPosition(pos => { goToLocation(pos.coords, props.map) }, err => { console.error(err) });
     }}>
         <img src={currentLocationIcon} className={"icon"} />

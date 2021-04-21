@@ -121,6 +121,9 @@ body {
 }
 
 .currentLocationButton .icon{
-  width: 25px;
-  height: 25px;
+  width: 35px;
+  height: 35px;
+    position: absolute;
+    top: -35px;
+    right: -5px;
 }
