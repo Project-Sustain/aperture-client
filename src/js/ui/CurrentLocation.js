@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from 'react';
-import { Button, NavLink} from 'reactstrap';
+import { Button } from 'reactstrap';
 import currentLocationIcon from '../../../images/current-location.png';
 
 function goToLocation(pos, map) {
