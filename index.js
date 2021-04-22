@@ -6,6 +6,7 @@ import "./src/css/queries.css";
 import "./src/css/modeling.css";
 import "./src/css/charts.css";
 import "./src/css/main.css";
+import "./src/css/menuResizing.css";
 import "./src/css/bootstrapOverrides.css";
 import "./src/css/third-party/nouislider.min.css";
 import "./src/css/third-party/bootstrap4-toggle.min.css";
