@@ -72,8 +72,11 @@ export default class LineGraph extends Chart {
             return;
         }
 
+        width = width < Chart.MINIMUM_WIDTH ? Chart.MINIMUM_WIDTH : width;
+        height = height < Chart.MINIMUM_HEIGHT ? Chart.MINIMUM_HEIGHT : height;
         view.width = width;
         view.height = height;
+
         view.svg.attr("viewBox", [0, 0, width, height]);
 
         // This will only work if the data comes in like this:

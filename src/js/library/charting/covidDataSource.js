@@ -55,35 +55,62 @@ END OF TERMS AND CONDITIONS
 
 */
 
-import BoundsToGISJOIN from "../boundsToGISJOIN"
 import { sustain_querier } from "../../grpc/GRPC_Querier/grpc_querier"
 import Util from "../apertureUtil"
+import DataSource from "./dataSource"
 
-export default class CovidDataSource {
+/** 
+ * A CovidDataSource makes special RPC requests to get COVID data for all
+ * counties that are within the viewport of the given map.
+ * 
+ * @author Pierce Smith
+ * @file DataSource for COVID by county
+ */
+export default class CovidDataSource extends DataSource {
     static querier = sustain_querier();
     static defaultType = "cases";
     static defaultDays = 7;
     static queryChangeZoomLevel = 7;
 
-    // The leaflet map used to determine the viewport bounds.
+    /**
+     * Construct a new CovidDataSource.
+     * @memberof CovidDataSource
+     * @method constructor
+     * @param {Leaflet Map} map The map to use to determine viewport bounds
+     */
     constructor(map) {
-        this.map = map;
+        super(map);
         this.gisjoinAggregateTemplate = [{ $match: { geometry: { $geoIntersects: { $geometry: { type: "Polygon", coordinates: []}}}}}, { $project: { GISJOIN: 1, properties: 1 }}];
-        BoundsToGISJOIN.config("county_geo_140mb_no_2d_index");
     }
 
+    /**
+     * Get a complete MongoDB aggregate query that can be used to get every
+     * county in the current map's viewport.
+     * @memberof CovidDataSource
+     * @method getGisjoinAggregate
+     * @returns {array<object>} A raw object representation of the aggregate query
+     */
     getGisjoinAggregate() {
         let mapBounds = Util.leafletBoundsToGeoJSONPoly(this.map.wrapLatLngBounds(this.map.getBounds()));
         this.gisjoinAggregateTemplate[0].$match.geometry.$geoIntersects.$geometry.coordinates = [ mapBounds ];
         return this.gisjoinAggregateTemplate;
     }
 
-    // Returns an array containing every result that comes from the stream.
-    // The transformer is a function applied to each (parsed) element before
-    // it is placed into the array. The default is the identity function.
-    // The accessor is the NAME of the function to call on the raw response
-    // to get data out (it will probably be either 'getData' or 'getJson'). 
-    // The default is 'getData.'
+    /** 
+     * Returns an array containing every result that comes from the stream.
+     * The transformer is a function applied to each (parsed) element before it
+     * is placed into the array. The default is the identity function.  The
+     * accessor is the NAME of the function to call on the raw response to get
+     * data out (it will probably be either 'getData' or 'getJson').  The
+     * default is 'getData.'
+     * @memberof CovidDataSource
+     * @method getStreamResults
+     * @param {object} stream The GRPC stream to get data from
+     * @param {function} transformer Function to apply to each item before 
+     * being returned
+     * @param {string} accessor The NAME of the function to call on the raw
+     * result from the stream to get usable data from it
+     */
     getStreamResults(stream, transformer = x => x, accessor = 'getData') {
         return new Promise((resolve, reject) => {
             let results = [];
@@ -99,11 +126,19 @@ export default class CovidDataSource {
         });
     }
 
-    // Returns a list of counties in the viewport.
-    // Minimally, these will objects with a GISJOIN field. Additional fields to
-    // extract from the db response can be passed as a list into the properties
-    // argument.
-    // For instance, properties = [ "NAMELSAD10" ] will include the county name.
+    /** 
+     * Returns a list of counties in the viewport.
+     * Minimally, these will objects with a GISJOIN field. Additional fields to
+     * extract from the db response can be passed as a list into the properties
+     * argument.
+     * For instance, properties = [ "NAMELSAD10" ] will include the county name.
+     * @memberof CovidDataSource
+     * @method getCounties
+     * @param {array<string>} properties Additional properties to include in the 
+     * returned county objects
+     * @returns {array<object>} An array of county objects, containing minimally
+     * a GISJOIN field
+     */
     async getCounties(properties) {
         let query = JSON.stringify(this.getGisjoinAggregate());
         let queryStream = CovidDataSource.querier.getStreamForQuery("county_geo_GISJOIN", query);
@@ -118,9 +153,18 @@ export default class CovidDataSource {
         return await this.getStreamResults(queryStream, reduce);
     }
 
-    // Query and return a promise to COVID data for what's in the viewport.
-    // Type is the kind of data to query - either "cases" or "deaths".
-    // daysWindowDays is the size of the moving average window in days.
+    /**
+     * Query and return a promise to moving-average COVID data for what's in
+     * the viewport.  The data appears in the form of an array of objects, one
+     * for each county, containing a "data", "GISJOIN", and "name" field.
+     * The data field is an array of objects, each containing an "avg" and
+     * "date" field - both should be self-exaplantory.
+     * @memberof CovidDataSource
+     * @method get
+     * @param {string} type The type of data to get, either "cases" or "deaths"
+     * @param {number} daysWindowSize The size of the sliding window
+     * @returns {array<object>} The data for each county in the map's viewport
+     */
     async get(type = CovidDataSource.defaultType, daysWindowSize = CovidDataSource.defaultDays) {
         let counties = await this.getCounties([ "NAMELSAD10" ]);
         
@@ -142,5 +186,6 @@ export default class CovidDataSource {
         return this.getStreamResults(stream, averagesTransform, 'getJson');
     }
 
+    // CovidDataSources have no supplement.
     updateSupplement() { }
 }

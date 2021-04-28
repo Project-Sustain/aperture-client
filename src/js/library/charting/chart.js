@@ -89,6 +89,10 @@ END OF TERMS AND CONDITIONS
  * @author Pierce Smith
  */
 export default class Chart {
+    // In pixels.
+    static MINIMUM_HEIGHT = 200;
+    static MINIMUM_WIDTH = 100;
+
     constructor(data) {
         this.views = [];
         this.data = data;

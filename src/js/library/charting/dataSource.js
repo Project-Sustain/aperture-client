@@ -55,220 +55,44 @@ END OF TERMS AND CONDITIONS
 
 */
 
-import SingleChartManager from "./singleChartManager";
-import SingleChartArea from "./singleChartArea";
-import LineGraph from "./lineGraph";
-import Histogram from "./histogram";
-import Scatterplot from "./scatterplot";
-import ScatterplotManager from "./scatterplotManager";
-import ScatterplotArea from "./scatterplotArea";
-import LineChartManager from "./lineChartManager";
-import LineChartArea from "./lineChartArea";
-import ValidFeatureManager from "./validFeatureManager";
-import Feature from "./feature";
-import resizable from "../resizable";
-import ChartFrame from "./chartFrame";
-import CovidDataSource from "./covidDataSource"
-import MapDataSource from "./mapDataSource"
-
-// An enumeration of each type of data source recognized by the ChartSystem.
-// See DataSource for more information about what a "data source" is.
-// DataSources are singleton with respect to each ChartSystem - only one
-// exists at a time, and it's stored within these objects.
-export const DataSourceType = {
-    MAP_FEATURES: {
-        name: "map_features",
-        sourceType: MapDataSource,
-        sourceInstance: undefined,
-        supplementObjectType: ValidFeatureManager,
-        supplementObjectInstance: undefined,
-    },
-    COUNTY_COVID: {
-        name: "county_covid",
-        sourceType: CovidDataSource,
-        sourceInstance: undefined,
-        supplementObjectType: undefined,
-        supplementObjectInstance: undefined,
-    }
-}
-
-// An enumeration of the each type of chart recognzied by the ChartSystem.
-// Each type has a type of manager, area, and chart, as well as a list of each
-// kind of DataSource it can use.  (At the moment, charts only support one data
-// source at a time.) These objects are passed into ChartSystem's getFrame
-// function to create new charts.
-export const ChartingType = {
-    LINE: {
-        name: "line",
-        managerType: LineChartManager,
-        areaType: SingleChartArea,
-        chartType: LineGraph,
-        wantsSources: [ DataSourceType.COUNTY_COVID ],
-    },
-    HISTOGRAM: {
-        name: "histogram",
-        managerType: SingleChartManager,
-        areaType: SingleChartArea,
-        chartType: Histogram,
-        wantsSources: [ DataSourceType.MAP_FEATURES ],
-    },
-    SCATTERPLOT: {
-        name: "scatterplot",
-        managerType: ScatterplotManager,
-        areaType: ScatterplotArea,
-        chartType: Scatterplot,
-        wantsSources: [ DataSourceType.MAP_FEATURES ],
-    },
-}
-
 /**
- * The brains that holds the entire charting operation together.
- * Every chart lives underneath this class. All ChartFrames originate from
- * this class. All data flows from this class to underlying charts. This class 
- * is your only god. 
+ * A DataSource is a source of data for charts. This class has no functionality
+ * on its own and is meant to be extended for each unique type of source.
  *
- * A single instance of this is instantiated in index.js, which is used for all
- * charting in Aperture. Creating another ChartSystem instance will create an 
- * entirely new, isolated charting ecosystem, and may cause horrible issues as
- * such a thing has not been properly tested.
+ * Usage is extremely simple. Call get() to get data. The format of the data,
+ * as well as any potential parameters to the function, are determined by each
+ * specific type of source. Consult documentation for this class's subclasses.
+ * MapDataSource and CovidDataSorce are examples.
  *
- * Construction of a ChartSystem automatically also creates a resizable. You
- * do not need to manually create and attach any resizables.
+ * DataSources also have a notion of a supplement object. This is, very
+ * generally, an object that helps the source or relies on data from the source
+ * that cannot be acquired from get(). DataSources can interact with supplements
+ * through the updateSupplement method, which takes in the supplement object.
  *
- * This class contains a few useful properties:
- * - this.catalog: The charting catalog, in raw object form
- * - this.graphable: A list of every graphable feature, as reported from the
- *   charting catalog
- * - this.resizable: The resizable that this ChartSystem lives in
+ * Both get() and updateSupplement() are called automatically within the update
+ * routine of the ChartSystem.
  *
- * @author Pierce Smith and Matt Young
- * @file An orchestrator for all charting operations
+ * @author Pierce Smith
+ * @file Superclass for all data sources
  */
-export default class ChartSystem {
-    // In pixels.
-    static MAX_CHART_HEIGHT = 350;
-
-    // Do not call this directly.
-    constructor(map, chartCatalogFilename) {
-        this.map = map;
-
-        this.chartFrames = [];
-
-        this.resizable = new resizable(resizable.minimum_width, resizable.minimum_height + 200, "white");
-        this.resizable.setResizeCallback((width, height) => {
-            this.chartFrames.forEach(frame => {
-                let newHeight = height - 200;
-                if (newHeight > ChartSystem.MAX_CHART_HEIGHT) {
-                    newHeight = ChartSystem.MAX_CHART_HEIGHT;
-                }
-
-                frame.setSize(width - 200, newHeight);
-                frame.resize();
-            });
-        });
-
-        $.getJSON(chartCatalogFilename, (catalog) => {
-            this.initializeUpdateHooks();
-            this.catalog = catalog;
-            this.graphable = catalog.map(e => {
-                return Object.entries(e.constraints).map(kv => {
-                    return Feature.compose(e.collection, kv[0], kv[1].label);
-                })
-            }).flat();
-
-            this.createDataSources();
-        });
-
-        this.doNotUpdate = false;
-
-    }
-
+export default class DataSource {
     /** 
-     * Initialize every needed data source for the ChartSytem's charts.
-     * This is only to be called once, and is done so in the constructor.
-     * Do not call this manually.
-     * @memberof ChartSystem
-     * @method createDataSource
+     * Construct a DataSource. Takes in a Leaflet map, storing it in this.map.
+     * The map is not strictly necessary for every type of data source, but is
+     * so often useful that it is always settable in the constructor
+     * for convenience.
+     * @memberof DataSource
+     * @method constructor
+     * @param {Leaflet Map=} map The (optional) leaflet map that the source is
+     * associated with
      */
-    createDataSources() {
-        Object.values(DataSourceType).forEach(source => {
-            source.sourceInstance = new source.sourceType(this.map, this.graphable);
-            if (source.supplementObjectType) {
-                source.supplementObjectInstance = new source.supplementObjectType();
-            }
-        });
+    constructor(map) {
+        this.map = map;
     }
 
-    /**
-     * Create a new chart frame for a given type of chart.
-     * This is how you are intended to put new charts into the UI. Call this,
-     * get a ChartFrame, and attach the frame's DOM node to some other node.
-     * See ChartFrame for a few more details.
-     * See chartBtnCreateChart.js for examples of how this function is used.
-     * @memberof ChartSystem
-     * @method getChartFrame
-     * @param type {object} A ChartType for the type of chart you wish to create
-     * @returns {object} A ChartFrame
-     */
-    getChartFrame(type) {
-        let node = document.createElement("div");
-        node.className = `${type.name}-chart-area`;
+    // To be overidden.
+    get() { }
 
-        let area = new type.areaType();
-        area.attachTo(node);
-        let manager = new type.managerType(this.catalog, area, type.wantsSources[0].supplementObjectInstance, this, type.chartType);
-        let frame = new ChartFrame(node, area, manager, type);
-        this.chartFrames.push(frame);
-
-        return frame;
-    }
-
-    initializeUpdateHooks() {
-        this.map.on('move', (e) => { this.update(); });
-        this.refreshTimer = window.setInterval(() => { this.update(); }, 2000);
-    }
-
-    /**
-     * Refreshes every data source and re-renders every chart.
-     * If something related to data sources changes, this function should be
-     * called. It is also called naturally every 2 seconds, and whenever the
-     * map moves.
-     * It is safe to call this function from inside chart code.
-     * @memberof ChartSystem
-     * @method update
-     * @param {object=} parameters An optional object with extra information
-     * for this update event
-     */
-    async update(parameters = {}) {
-        if (this.doNotUpdate && !parameters.force) {
-            return;
-        }
-
-        // This is what forces the charts to re-render... very inelegant.
-        // TODO: This needs to not suck
-        this.resizable.triggerResizeEvent();
-
-        Object.values(DataSourceType).forEach(async source => {
-            this.chartFrames.forEach(async frame => {
-                if (frame.getChartType().wantsSources.find(wanted => wanted.name === source.name)) {
-                    let sourceParams = frame.manager.getSourceParameters();
-                    frame.manager.update(await source.sourceInstance.get(...sourceParams));
-                    source.sourceInstance.updateSupplement(source.supplementObjectInstance);
-                }
-            });
-        });
-
-        this.doNotUpdate = true;
-        window.setTimeout(() => { this.doNotUpdate = false; }, 200);
-    }
-
-
-    /**
-     * Toggle whether or not the charting window is visible.
-     * @memberof ChartSystem
-     * @method toggleVisible
-     */
-    toggleVisible() {
-        this.resizable.toggleVisible();
-    }
+    // To be overidden.
+    updateSupplement() { }
 }

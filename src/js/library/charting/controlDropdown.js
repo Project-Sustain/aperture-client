@@ -58,8 +58,10 @@ END OF TERMS AND CONDITIONS
 export default class ControlDropdown {
     constructor(frame, title) {
         this.chartControlButtonGroup = this.createChartControlButtonGroup();
-        let chartDropdown = this.createDropdown(frame, title);
-        this.chartControlButtonGroup.appendChild(chartDropdown);
+        this.chartDropdown = this.createDropdown(frame, title);
+        this.chartControlButtonGroup.appendChild(this.chartDropdown);
+
+        this.dropdownButton.onclick = () => frame.update();
     }
 
     getDOMNode() {
@@ -75,15 +77,15 @@ export default class ControlDropdown {
 
     createDropdown(chart, title) {
         let chartDropdown = this.createChartDropdown();
-        let dropdownButton = this.createDropdownButton(title);
+        this.dropdownButton = this.createDropdownButton(title);
         this.dropdownMenu = this.createDropdownMenu();
 
-        chartDropdown.appendChild(dropdownButton);
+        chartDropdown.appendChild(this.dropdownButton);
         chartDropdown.appendChild(this.dropdownMenu);
 
         $(function () {
             $('[data-toggle="dropdown"]').dropdown()
-        })
+        });
 
         return chartDropdown;
     }

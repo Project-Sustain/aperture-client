@@ -59,25 +59,36 @@ import Scatterplot from "./scatterplot";
 import Feature from "./feature";
 import { DataSourceType } from "./chartSystem";
 import { FeatureChartMessageType } from "./featureChartMessageType";
+import ChartManager from "./chartManager"
 
-export default class ScatterplotManager {
-    constructor(catalog, chartArea, validFeatureManager, chartSystem) {
-        this.catalog = catalog;
-        this.chartArea = chartArea;
+/**
+ * Manages scatterplots, which are "featured" charts (i.e. pull form in-view
+ * map data).
+ * See ChartManager for more information about what a chart manager is.
+ *
+ * @author Pierce Smith
+ * @file Chart manager for scatterplots
+ */
+export default class ScatterplotManager extends ChartManager {
+    constructor(catalog, chartArea, validFeatureManager, chartSystem, chartType) {
+        super(catalog, chartArea, validFeatureManager, chartSystem, chartType);
         this.scatterplot = new Scatterplot();
         this.chartArea.addChart(this.scatterplot);
     
-        this.featureManager = validFeatureManager;
         this.currentFeatures = {};
-
-        this.system = chartSystem;
-
         this.chartArea.setChangeAxisButtonCallbacks(
             () => { this.axisButtonCallback("x"); },
             () => { this.axisButtonCallback("y"); }
         );
     }
 
+    /**
+     * Changes the feature that this graph displays on a given axis, "x" or "y".
+     * @memberof ScatterplotManager
+     * @method changeFeature
+     * @param {string} axis Must be "x" or "y"
+     * @param {string} feature The feature to change to
+     */
     changeFeature(axis, feature) {
         this.currentFeatures[axis] = feature;
         DataSourceType.MAP_FEATURES.sourceInstance.get().then((values) => {
@@ -85,6 +96,17 @@ export default class ScatterplotManager {
         });
     }
 
+    /**
+     * The function that is called whenever an axis arrow button is called
+     * (the left/right arrow buttons that cycle features at the top of
+     * the scatterplot)
+     * It essentially cycles the passed axis and is, for all intents and
+     * purposes, identical to cycleAxis.
+     * @memberof ScatterplotManager
+     * @method axisButtonCallback
+     * @param {string} axis Must be "x" or "y"
+     * @param {string} direction Either "next" or "previous"
+     */
     axisButtonCallback(axis, direction) {
         this.currentFeatures[axis] = this.nextValidFeatureForAxis(axis, direction);
         DataSourceType.MAP_FEATURES.sourceInstance.get().then((values) => {
@@ -92,6 +114,15 @@ export default class ScatterplotManager {
         });
     }
 
+    /**
+     * Uses the stored featureManager to determine what the next valid feature
+     * for a given axis is.
+     * This is used to implement axis cycling.
+     * @memberof ScatterplotManager
+     * @method nextValidFeatureForAxis
+     * @param {string} axis Must be "x" or "y"
+     * @param {string} direction Either "next" or "previous"
+     */
     nextValidFeatureForAxis(axis, direction) {
         let ignore = [];
         for (let axisToIgnore in this.currentFeatures) {
@@ -102,10 +133,31 @@ export default class ScatterplotManager {
         return this.featureManager.getNextFeature(this.currentFeatures[axis], ignore, direction);
     }
 
+    /**
+     * The function that is called whenever an axis arrow button is called
+     * (the left/right arrow buttons that cycle features at the top of
+     * the scatterplot)
+     * It essentially cycles the passed axis and is, for all intents and
+     * purposes, identical to cycleAxis.
+     * @memberof ScatterplotManager
+     * @method axisButtonCallback
+     * @param {string} axis Must be "x" or "y"
+     * @param {string} direction Either "next" or "previous"
+     */
     cycleAxis(axis, direction) {
         this.axisButtonCallback(axis, direction);
     }
     
+    /** 
+     * Update this chart with new data.
+     * The data must be featured - that is, in a format consistent with what is
+     * passed out of a MapDataFilter (An object, with keys being feature names,
+     * and values being an array of objects with data fields)
+     * @memberof ScatterplotManager
+     * @method update
+     * @param {object} values An object with one property for each feature,
+     * values being arrays of objects with "data" fields
+     */
     update(values) {
         let shouldUpdate = this.featureManager.enoughFeaturesExist(2);
 
@@ -123,6 +175,14 @@ export default class ScatterplotManager {
         }
     }
 
+    /** 
+     * Handle a messge. See FeatureChartMessageType for the kinds of messages
+     * this can accept.
+     * @memberof ScatterplotManager
+     * @method passMessage
+     * @param {object} message A featured chart message a defined in
+     * FeatureChartMessageType
+     */
     passMessage(message) {
         switch (message.type) {
             case FeatureChartMessageType.CYCLE_AXIS: {
@@ -135,6 +195,16 @@ export default class ScatterplotManager {
         }
     }
 
+    /** 
+     * Takes in a normal feature data object and transforms it into a format
+     * more useful for the internal scatterplot object, also filtering it to
+     * only include data from the currently selected features.
+     * @memberof ScatterplotManager
+     * @method prepareData
+     * @param {values} object A normal featured data object
+     * @returns {array<object} An array of objects with "x" and "y" fields
+     * containing, respectively, the data for the selected x and y axis
+     */
     prepareData(values) {
         let data = [];
         let xfeat = values[this.currentFeatures.x];
@@ -164,6 +234,12 @@ export default class ScatterplotManager {
         return data;
     }
 
+    /* 
+     * Histograms do not ask of any special requirements from their source.
+     * @memberof ScatterplotManager
+     * @method getSourceParameters
+     * @returns {array} An empty array
+     */
     getSourceParameters() {
         return [];
     }

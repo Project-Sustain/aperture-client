@@ -57,13 +57,20 @@ END OF TERMS AND CONDITIONS
 
 import Feature from "./feature"
 import { FeatureChartMessageType } from "./featureChartMessageType"
+import ChartManager from "./chartManager"
 
-export default class SingleChartManager {
+/**
+ * Manages histograms, which are "featured" charts (i.e. pull from in-view
+ * map data).
+ * See ChartManager for more information about what a chart manager does.
+ *
+ * @author Pierce Smith
+ * @file Chart manager for histograms
+ */
+export default class SingleChartManager extends ChartManager {
     constructor(catalog, chartArea, validFeatureManager, chartSystem, chartType) {
+        super(catalog, chartArea, validFeatureManager, chartSystem, chartType);
         this.charts = {};
-        this.chartArea = chartArea;
-        this.chartSystem = chartSystem;
-        this.featureManager = validFeatureManager;
         this.currentFeature = this.featureManager.getAnyFeature();
 
         this.chartSystem.graphable.forEach(feature => {
@@ -78,6 +85,15 @@ export default class SingleChartManager {
         });
     }
 
+    /**
+     * Changes the feature that this graph displays.
+     * Histograms only have one axis, which is the "x" axis,
+     * so passing anything other than "x" into this will have no effect.
+     * @memberof SingleChartManager
+     * @method changeFeature
+     * @param {string} axis Must be "x"
+     * @param {string} feature The feature to change to
+     */
     changeFeature(axis, feature) {
         if (axis === "x") {
             this.currentFeature = feature;
@@ -88,12 +104,32 @@ export default class SingleChartManager {
         }
     }
 
+    /**
+     * Changes the feature this graph displays to the "next" or "previous"
+     * feature, as sorted by their position in the charting catalog.
+     * Histograms only have one axis, which is the "x" axis,
+     * so passing anything other than "x" into this will have no effect.
+     * @memberof SingleChartManager
+     * @method changeFeature
+     * @param {string} axis Must be "x"
+     * @param {string} direction Either "next" or "previous"
+     */
     cycleAxis(axis, direction) {
         if (axis === "x") {
             this.changeFeature(axis, this.featureManager.getNextFeature(this.currentFeature, [], direction));
         }
     }
 
+    /** 
+     * Update this chart with new data.
+     * The data must be featured - that is, in a format consistent with what is
+     * passed out of a MapDataFilter (An object, with keys being feature names,
+     * and values being an array of objects with data fields)
+     * @memberof SingleChartManager
+     * @method update
+     * @param {object} values An object with one property for each feature,
+     * values being arrays of objects with "data" fields
+     */
     update(values) {
         let enoughFeatures = this.featureManager.enoughFeaturesExist(1);
 
@@ -106,6 +142,14 @@ export default class SingleChartManager {
         }
     }
 
+    /** 
+     * Handle a messge. See FeatureChartMessageType for the kinds of messages
+     * this can accept.
+     * @memberof SingleChartManager
+     * @method passMessage
+     * @param {object} message A featured chart message a defined in
+     * FeatureChartMessageType
+     */
     passMessage(message) {
         switch (message.type) {
             case FeatureChartMessageType.CYCLE_AXIS: {
@@ -118,6 +162,12 @@ export default class SingleChartManager {
         }
     }
 
+    /* 
+     * Histograms do not ask of any special requirements from their source.
+     * @memberof SingleChartManager
+     * @method getSourceParameters
+     * @returns {array} An empty array
+     */
     getSourceParameters() {
         return [];
     }

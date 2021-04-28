@@ -76,9 +76,7 @@
 .overlay .option{
     width: 15px;
     height: 15px;
-    border-radius: 50%;
-    background: #f8f8f8;
-    border: 1px solid #777;
+    border-radius: 3px;
     position: absolute;
 }
 
@@ -86,7 +84,35 @@
     right: -5px;
     top: -5px;
     cursor: nesw-resize;
+    border-right: 1px solid #777;
+    border-top: 1px solid #777;
 }
+
+.overlay .option.top-left {
+    left: -5px;
+    top: -5px;
+    cursor: nwse-resize;
+    border-left: 1px solid #777;
+    border-top: 1px solid #777;
+}
+
+.overlay .option.bot-right {
+    right: -5px;
+    bottom: -5px;
+    cursor: nwse-resize;
+    border-right: 1px solid #777;
+    border-bottom: 1px solid #777;
+}
+
+.overlay .option.bot-left {
+    left: -5px;
+    bottom: -5px;
+    cursor: nesw-resize;
+    border-left: 1px solid #777;
+    border-bottom: 1px solid #777;
+}
+
+.overlay .option.t
 
 .histogram-chart-area {
     width: 80%;

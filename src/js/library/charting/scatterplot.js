@@ -66,6 +66,8 @@ export default class Scatterplot extends Chart {
     rerender(newWidth, newHeight, viewIndex) {
         let view = this.views[viewIndex];
 
+        newWidth = newWidth < Chart.MINIMUM_WIDTH ? Chart.MINIMUM_WIDTH : newWidth;
+        newHeight = newHeight < Chart.MINIMUM_HEIGHT ? Chart.MINIMUM_HEIGHT : newHeight;
         view.width = newWidth;
         view.height = newHeight;
         view.svg.attr("viewBox", [0, 0, newWidth, newHeight]);

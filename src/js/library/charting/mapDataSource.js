@@ -55,21 +55,61 @@ END OF TERMS AND CONDITIONS
 
 */
 
+import DataSource from "./dataSource"
 import MapDataFilterWrapper from "../mapDataFilterWrapper"
 
-export default class MapDataSource {
+/** 
+ * A MapDataSource is the traditional DataSource used for getting data from the
+ * map constraints. Its get() function grabs from the MapDataFilter, which
+ * gathers data directly from the map, taking into account the bounds of the
+ * viewport and what is currently visible.
+ * 
+ * @author Pierce Smith
+ * @file DataSource for map constraints
+ */
+export default class MapDataSource extends DataSource {
+    /**
+     * Construct a new MapDataSource.
+     * @memberof MapDataSource
+     * @method constructor
+     * @param {Leaflet Map} map The map from which to get the data.
+     * @param {array<Feature>} features A list of features to consider when
+     * getting data from the map.
+     */
     constructor(map, features) {
-        this.map = map;
+        super(map);
         this.features = features;
         this.filter = MapDataFilterWrapper;
     }
 
+    /**
+     * The data returned from get() is an object with one property for each
+     * feature for which data exists in the current viewport bounds,  whose key
+     * is the name of the feature requested and whose value is an array of
+     * objects containing, at a minimum, a "data" property with the
+     * corresponding value. A (contrived) example:
+     *
+     * get() = { median_income: [ { data: 80,000 }, { data: 30,000 } ], temperature: [ { data: 89 } ] }
+     *
+     * See the model() function of the MapDataFilter for a full list of
+     * properties included in each object.
+     * @memberof MapDataSource
+     * @method get
+     * @returns {object} All data in the bounds of the map
+     */
     async get() {
         this.values = await this.filter.get(this.features, this.map.getBounds());
         return this.values;
     }
 
-    // The supplement object for a MapDataSource is a validFeatureManager.
+    /** 
+     * The supplement for the MapDataSource is a ValidFeatureManager.
+     * This function updates the ValidFeatureManager, telling it which features
+     * actually ended up having data or not.
+     * @memberof MapDataSource
+     * @method updateSupplement
+     * @param {object} featureManager The ValidFeatureManager instance to update
+     */
     updateSupplement(featureManager) {
         let validFeatures = Object.entries(this.values).filter(kv => kv[1].length !== 0).map(kv => kv[0]);
         featureManager.update(validFeatures);

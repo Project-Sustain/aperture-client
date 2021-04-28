@@ -147,7 +147,9 @@
         "label": "Social Vulnerability Index",
         "name": "RPL_THEMES",
         "type": "range",
-        "step": 0.05
+        "step": 0.05,
+        "min": 0,
+        "max": 1
       }
     ]
   },
@@ -171,7 +173,9 @@
         "label": "Social Vulnerability Index",
         "name": "RPL_THEMES",
         "type": "range",
-        "step": 0.05
+        "step": 0.05,
+        "min": 0,
+        "max": 1
       }
     ]
   },

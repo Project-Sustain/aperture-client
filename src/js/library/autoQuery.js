@@ -526,9 +526,9 @@ export default class AutoQuery {
                 return this.colorCode;
             case "gradient":
                 const range = this.getConstraintMetadata(this.color.variable).range;
-                const normalizedValue = (value - range[0]) / (range[1] - range[0]);
+                const normalizedValue = Math.min(Math.max((value - range[0]) / (range[1] - range[0]), 0), 0.9999999);
                 const skewCorrectedValue = skewDir === "right" ? (1 - (Math.pow(1 - normalizedValue, skew))) : Math.pow(normalizedValue, skew); // https://www.desmos.com/calculator/gezo3xfbfj
-                const colorindex = Math.round(skewCorrectedValue * 32); //normalizes value on range. results in #1 - 32
+                const colorindex = Math.floor(skewCorrectedValue * 32); //normalizes value on range. results in #0 - 31
                 return this.colorCode[colorindex];
             case "sequential":
                 if (this.color.map)

@@ -23,11 +23,14 @@ export function createChartControl(chart, graphBox, type) {
             control.setOptions(activeFeatures.map(feature => {
                 return { 
                     name: Feature.getFriendlyName(feature),
-                    onclick: () => chart.passMessage({ 
-                        type: FeatureChartMessageType.SET_AXIS, 
-                        axis: control.getLinkedAxis(), 
-                        feature: feature,
-                    }),
+                    onclick: () => {
+                        chart.passMessage({ 
+                            type: FeatureChartMessageType.SET_AXIS, 
+                            axis: control.getLinkedAxis(), 
+                            feature: feature,
+                        });
+                        window.setTimeout(chart.update, 100);
+                    },
                 };
             }));
         }
@@ -59,6 +62,7 @@ function getControlsForType(chart, type) {
                             type: LineChartMessageType.CHANGE_PARAMETERS,
                             newType: 'cases',
                         });
+                        chart.update();
                     },
                 }, {
                     name: "Mortality",
@@ -67,6 +71,7 @@ function getControlsForType(chart, type) {
                             type: LineChartMessageType.CHANGE_PARAMETERS,
                             newType: 'deaths',
                         });
+                        chart.update();
                     },
                 },
             ]);

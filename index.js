@@ -7,6 +7,7 @@ import "./src/css/modeling.css";
 import "./src/css/charts.css";
 import "./src/css/main.css";
 import "./src/css/menuResizing.css";
+import "./src/css/leafletOverrides.css";
 import "./src/css/bootstrapOverrides.css";
 import "./src/css/third-party/nouislider.min.css";
 import "./src/css/third-party/bootstrap4-toggle.min.css";
@@ -35,6 +36,7 @@ import RenderInfrastructure from "./src/js/library/renderInfrastructure.js";
 import AutoMenu from "./src/js/library/autoMenu.js";
 import MenuGenerator, { updateLayers } from "./src/js/ui/menuGenerator.js";
 import DefensiveOptimization from "./src/js/ui/DefensiveOptimization";
+import GoTo from "./src/js/ui/GoTo"
 
 //idek what to do with theses files, things break if I try to make them import specific things
 import "./src/js/third-party/leaflet.markercluster.js";
@@ -47,8 +49,6 @@ const PAGE_URL = window.location.href;
 const DEV = PAGE_URL.includes("localhost") || PAGE_URL.includes("127.0.0.1");
 if (DEV && !localStorage.getItem("noDev")) {
     console.log("Aperture client set to DEV mode.")
-    AutoQuery.minCountyZoom = 1;
-    AutoQuery.minTractZoom = 1;
 }
 
 //--------------
@@ -182,6 +182,9 @@ ReactDOM.render((<ModelMenu/>), modelContainer);
 
 const queryBlockContainer = document.getElementById("query-block-container");
 ReactDOM.render((<DefensiveOptimization />), queryBlockContainer);
+
+const currentLocationContainer = document.getElementById("current-location");
+ReactDOM.render((<GoTo map={map}/>),currentLocationContainer)
 
 map.on("moveend", function (e) {
     updateLayers();
