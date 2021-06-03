@@ -5,6 +5,7 @@ import WorkspaceLayers from "./WorkspaceLayers";
 import {prettifyJSON} from "./Helpers";
 import AutoMenu from "../../library/autoMenu";
 import {componentIsRendering} from "../TabSystem";
+import Typography from "@material-ui/core/Typography";
 
 function overwrite() {}
 export const printHashes = false;
@@ -12,6 +13,11 @@ export const printHashes = false;
 const useStyles = makeStyles((theme) => ({
     root: {
         width: '98%',
+    },
+    centerText: {
+        textAlign: 'center',
+        fontSize: 25,
+        margin: theme.spacing(2),
     },
 }));
 
@@ -65,6 +71,7 @@ export default function Workspace() {
     if(componentIsRendering) {console.log("|Workspace Rerending|")}
     return (
         <div className={classes.root}>
+            <Typography className={classes.centerText}>Data Exploration</Typography>
             <WorkspaceControls layers={layers} graphableLayers={graphableLayers} layerTitles={layerTitles}
                                openLayers={openLayers} setOpenLayers={setOpenLayers}
                                workspace={workspace} setWorkspace={setWorkspace} />

@@ -1,18 +1,24 @@
-import React, {useState} from 'react';
-import {Button} from "@material-ui/core";
+import React from 'react';
 import {componentIsRendering} from "../TabSystem"
 import Typography from "@material-ui/core/Typography";
 
+import {makeStyles} from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        width: '98%',
+    },
+    centerText: {
+        textAlign: 'center',
+        fontSize: 25,
+        margin: theme.spacing(2),
+    },
+}));
 export default function NewModeling() {
-    const [state, setState] = useState(0)
-    function increment() {
-        const newState = state + 1;
-        setState(newState);
-    }
+    const classes = useStyles();
 
     if(componentIsRendering) console.log("|NewModeling|");
     return (
-        <Typography>Coming Soon</Typography>
-        // <Button variant="outlined" onClick={() => increment()}>{state}</Button>
+        <Typography className={classes.centerText}>Modeling</Typography>
     )
 }
