@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import IconButton from "@material-ui/core/IconButton";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import {Equalizer} from "@material-ui/icons";
 import NewModeling from "./NewModeling/NewModeling";
 import Workspace from "./NewDataExploration/Workspace";
 import { useGlobalState } from "./global/GlobalState";
@@ -19,9 +17,11 @@ export const componentIsRendering = false;
 const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
+
     },
     buttonSpacing: {
-        margin: theme.spacing(1),
+        margin: theme.spacing(2),
+        marginTop: theme.spacing(3),
     },
 }));
 
@@ -54,18 +54,13 @@ export default function TabSystem(props) {
                     justify="center"
                     alignItems="center"
                 >
-                    <Grid item></Grid>
                     <Grid item>
-                        <ButtonGroup className={classes.buttonSpacing}>
+                        <ButtonGroup className={classes.buttonSpacing} size="large">
                             <Button variant="outlined" startIcon={<ExploreIcon/>} onClick={() => switchTabs(0)}>Data Exploration</Button>
                             <Button variant="outlined" startIcon={<DataUsageIcon/>} onClick={() => switchTabs(1)}>Modeling</Button>
                             <Button variant="outlined" startIcon={<EqualizerIcon/>} id="nav-graph-button" onClick={() => showGraph}>Graphing</Button>
+                            <Button variant="outlined" startIcon={<ChevronLeftIcon/>} onClick={props.handleDrawerClose}>Close</Button>
                         </ButtonGroup>
-                    </Grid>
-                    <Grid item>
-                        <IconButton onClick={props.handleDrawerClose}>
-                            <ChevronLeftIcon color="primary" />
-                        </IconButton>
                     </Grid>
                 </Grid>
             </Paper>

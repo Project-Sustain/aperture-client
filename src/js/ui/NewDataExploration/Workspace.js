@@ -6,6 +6,7 @@ import {prettifyJSON} from "./Helpers";
 import AutoMenu from "../../library/autoMenu";
 import {componentIsRendering} from "../TabSystem";
 import Typography from "@material-ui/core/Typography";
+import ExploreIcon from '@material-ui/icons/Explore';
 
 function overwrite() {}
 export const printHashes = false;
@@ -71,7 +72,7 @@ export default function Workspace() {
     if(componentIsRendering) {console.log("|Workspace Rerending|")}
     return (
         <div className={classes.root}>
-            <Typography className={classes.centerText}>Data Exploration</Typography>
+            {/*<Typography className={classes.centerText}>Data Exploration</Typography>*/}
             <WorkspaceControls layers={layers} graphableLayers={graphableLayers} layerTitles={layerTitles}
                                openLayers={openLayers} setOpenLayers={setOpenLayers}
                                workspace={workspace} setWorkspace={setWorkspace} />
