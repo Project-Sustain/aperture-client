@@ -1,6 +1,6 @@
-import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
+import { createTheme, responsiveFontSizes } from '@material-ui/core/styles';
 
-let theme = createMuiTheme({
+let theme = createTheme({
     typography: {
         fontFamily: 'Roboto, sans-serif'
     }

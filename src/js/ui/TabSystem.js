@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { StyledEngineProvider } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid";
 import NewModeling from "./NewModeling/NewModeling";
@@ -10,7 +11,7 @@ import DataUsageIcon from '@material-ui/icons/DataUsage';
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 import CloseIcon from "@material-ui/icons/Close";
 
-export const componentIsRendering = false;
+export const componentIsRendering = true;
 
 const useStyles = makeStyles((theme) => ({
     root: {
