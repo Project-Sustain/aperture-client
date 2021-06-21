@@ -1,4 +1,4 @@
-.tab-system-root {
+.tab-system {
     overflow-x: hidden;
     flex-grow: 1;
 }
@@ -21,4 +21,30 @@
 
 .large-margin {
     margin: 30px;
+}
+
+.menu-button {
+    margin: 50px;
+    z-index: 2002;
+    top: -20px;
+    left: -20px;
+}
+
+.hide {
+    display: none;
+}
+
+.sidebar {
+    display: flex;
+    z-index: 2001;
+}
+
+.drawer {
+    width: 800px;
+    flex-shrink: 0;
+}
+
+.drawer-paper {
+    width: 800px;
+    opacity: 0.95;
 }
