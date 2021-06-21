@@ -16,10 +16,9 @@
 }
 
 .menu-button {
-    margin: 50px;
     z-index: 2002;
-    top: -20px;
-    left: -20px;
+    top: 20px;
+    left: 20px;
 }
 
 .hide {

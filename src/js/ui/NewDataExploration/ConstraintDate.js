@@ -4,18 +4,6 @@ import {componentIsRendering} from "../TabSystem";
 import { DatePicker } from '@material-ui/pickers'
 import Grid from "@material-ui/core/Grid";
 
-
-import 'date-fns';
-import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-    MuiPickersUtilsProvider,
-    KeyboardTimePicker,
-    KeyboardDatePicker,
-} from '@material-ui/pickers';
-
-
 const configs = {
     year: {
         views: ["year"]
@@ -57,51 +45,42 @@ export default function ConstraintDate({constraint, querier}) {
     if(componentIsRendering) {console.log("|ContraintSlider Rerending|")}
     return (
         <div className='full-width' id={`constraint-div-${constraint.label}`}>
-            <Grid container direction="row" justify="center" alignItems="center">
-                <Grid item>
-                    <Typography className='center-text' id={`date-picker-${constraint.label}`} gutterBottom>
-                        {/*<strong>{constraint.label}:</strong> &nbsp;*/}
-                        <span className='no-wrap'>{minMaxDate[0].toDateString()} - {minMaxDate[1].toDateString()}</span>
-                    </Typography>
-                </Grid>
-            </Grid>
-            <Grid container direction="row" justify="center" alignItems="center">
-                <Grid item className='half-width'>
-
-                </Grid>
-                <Grid item className='half-width'>
-
-                </Grid>
-
-
-
-                <Grid item className='half-width'>
-                    <DatePicker
-                        className='three-quarter-width'
-                        {...config}
-                        label="Min Date"
-                        value={minMaxDate[0]}
-                        minDate={epochToDate(min)}
-                        maxDate={minMaxDate[1]}
-                        onChange={(e) => {
-                            setMinMaxDate([new Date(e.valueOf()), minMaxDate[1]])
-                        }}
-                    />
-                </Grid>
-                <Grid item className='half-width'>
-                    <DatePicker
-                        className='three-quarter-width'
-                        {...config}
-                        label="Max Date"
-                        value={minMaxDate[1]}
-                        minDate={minMaxDate[0]}
-                        maxDate={epochToDate(max)}
-                        onChange={(e) => {
-                            setMinMaxDate([minMaxDate[0], new Date(e.valueOf())])
-                        }}
-                    />
-                </Grid>
-            </Grid>
+            {/*<Grid container direction="row" justify="center" alignItems="center">*/}
+            {/*    <Grid item>*/}
+            {/*        <Typography className='center-text' id={`date-picker-${constraint.label}`} gutterBottom>*/}
+            {/*            /!*<strong>{constraint.label}:</strong> &nbsp;*!/*/}
+            {/*            <span className='no-wrap'>{minMaxDate[0].toDateString()} - {minMaxDate[1].toDateString()}</span>*/}
+            {/*        </Typography>*/}
+            {/*    </Grid>*/}
+            {/*</Grid>*/}
+            {/*<Grid container direction="row" justify="center" alignItems="center">*/}
+            {/*    <Grid item className='half-width'>*/}
+            {/*        <DatePicker*/}
+            {/*            className='three-quarter-width'*/}
+            {/*            {...config}*/}
+            {/*            label="Min Date"*/}
+            {/*            value={minMaxDate[0]}*/}
+            {/*            minDate={epochToDate(min)}*/}
+            {/*            maxDate={minMaxDate[1]}*/}
+            {/*            onChange={(e) => {*/}
+            {/*                setMinMaxDate([new Date(e.valueOf()), minMaxDate[1]])*/}
+            {/*            }}*/}
+            {/*        />*/}
+            {/*    </Grid>*/}
+            {/*    <Grid item className='half-width'>*/}
+            {/*        <DatePicker*/}
+            {/*            className='three-quarter-width'*/}
+            {/*            {...config}*/}
+            {/*            label="Max Date"*/}
+            {/*            value={minMaxDate[1]}*/}
+            {/*            minDate={minMaxDate[0]}*/}
+            {/*            maxDate={epochToDate(max)}*/}
+            {/*            onChange={(e) => {*/}
+            {/*                setMinMaxDate([minMaxDate[0], new Date(e.valueOf())])*/}
+            {/*            }}*/}
+            {/*        />*/}
+            {/*    </Grid>*/}
+            {/*</Grid>*/}
          </div>
     );
 }
