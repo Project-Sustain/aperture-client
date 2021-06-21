@@ -4,6 +4,18 @@ import {componentIsRendering} from "../TabSystem";
 import { DatePicker } from '@material-ui/pickers'
 import Grid from "@material-ui/core/Grid";
 
+
+import 'date-fns';
+import React from 'react';
+import Grid from '@material-ui/core/Grid';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+    MuiPickersUtilsProvider,
+    KeyboardTimePicker,
+    KeyboardDatePicker,
+} from '@material-ui/pickers';
+
+
 const configs = {
     year: {
         views: ["year"]
@@ -29,7 +41,7 @@ export default function ConstraintDate({constraint, querier}) {
     const [minMaxDate, setMinMaxDate] = useState([epochToDate(min), epochToDate(max)]);
     const config = configs[constraint.step];
 
-    
+
     useEffect(() => {
         const minMaxCommited = [dateToEpoch(minMaxDate[0]), dateToEpoch(minMaxDate[1])]
         querier.updateConstraint(constraint.name, minMaxCommited);
@@ -54,6 +66,15 @@ export default function ConstraintDate({constraint, querier}) {
                 </Grid>
             </Grid>
             <Grid container direction="row" justify="center" alignItems="center">
+                <Grid item className='half-width'>
+
+                </Grid>
+                <Grid item className='half-width'>
+
+                </Grid>
+
+
+
                 <Grid item className='half-width'>
                     <DatePicker
                         className='three-quarter-width'
