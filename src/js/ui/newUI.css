@@ -1,0 +1,25 @@
+.tab-system-root {
+    width: 100%;
+    overflow-x: hidden;
+    flex-grow: 1;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.custom-bottom-border {
+    border-bottom: 2px solid #adadad;
+}
+
+.small-margin {
+    margin: 10px;
+}
+
+.medium-margin {
+    margin: 20px;
+}
+
+.large-margin {
+    margin: 30px;
+}

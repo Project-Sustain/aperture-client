@@ -8,27 +8,11 @@ import ExploreIcon from '@material-ui/icons/Explore';
 import DataUsageIcon from '@material-ui/icons/DataUsage';
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 import CloseIcon from "@material-ui/icons/Close";
+import './newUI.css';
 
 export const componentIsRendering = true;
 
-function useStyles() {
-    return {
-        root: {
-            flexGrow: 1,
-            width: '100%',
-            overflowX: "hidden",
-        },
-        buttonSpacing: {
-            margin: '30px',
-        },
-        tabs: {
-            borderBottom: '2px solid #adadad',
-        },
-    }
-};
-
 export default function TabSystem(props) {
-    const classes = useStyles();
     const [globalState, setGlobalState] = useGlobalState();
 
     const tabSwitchingStyles = [[{display: 'block'}, 'contained', 'primary'], [{display: 'none'}, 'outlined', '']];
@@ -47,8 +31,8 @@ export default function TabSystem(props) {
 
     if(componentIsRendering) console.log("|TabSystem|");
     return (
-        <div className={classes.root}>
-            <div className={classes.tabs}>
+        <div className='tab-system-root'>
+            <div className='custom-bottom-border'>
                 <Grid
                     container
                     spacing={3}
@@ -56,7 +40,7 @@ export default function TabSystem(props) {
                     alignItems="center"
                 >
                     <Grid item>
-                        <ButtonGroup className={classes.buttonSpacing} size="large">
+                        <ButtonGroup className='large-margin' size="large">
                             <Button variant={dataExplortaionButtonStyles[1]} color={dataExplortaionButtonStyles[2]} startIcon={<ExploreIcon/>} onClick={() => switchTabs(0)}>Data Exploration</Button>
                             <Button variant={modelingButtonStyles[1]} color={modelingButtonStyles[2]} startIcon={<DataUsageIcon/>} onClick={() => switchTabs(1)}>Modeling</Button>
                             <Button variant="outlined" startIcon={<EqualizerIcon/>} id="nav-graph-button" onClick={() => setGlobalState({ chartingOpen: !globalState.chartingOpen })}>Graphing</Button>
