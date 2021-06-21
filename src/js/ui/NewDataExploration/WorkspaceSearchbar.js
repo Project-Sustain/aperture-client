@@ -22,22 +22,14 @@ function findLayerIndex(layerLabel, layerTitles) {
     }
 }
 
-// const CustomTooltip = withStyles((theme) => ({
-//     tooltip: {
-//         fontSize: 14,
-//     },
-// }))(Tooltip);
-
 function graphIcon(layer, graphableLayers) {
     if(isGraphable(layer, graphableLayers)) {
-        // return <CustomTooltip title="This dataset can be graphed" placement="right" arrow><IconButton><EqualizerIcon color="primary" /></IconButton></CustomTooltip>
         return <Tooltip title="This dataset can be graphed" placement="right" arrow><IconButton><EqualizerIcon color="primary" /></IconButton></Tooltip>
     }
 }
 
 function infoIcon(layerInfo) {
     if(layerInfo) {
-        // return <CustomTooltip title={layerInfo} placement="right" arrow><IconButton><InfoIcon color="primary" /></IconButton></CustomTooltip>
         return <Tooltip title={layerInfo} placement="right" arrow><IconButton><InfoIcon color="primary" /></IconButton></Tooltip>
     }
 }
