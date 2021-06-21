@@ -1,0 +1,23 @@
+.modal {
+    top: 20%;
+    left: 70%;
+    position: absolute;
+    width: 400px;
+    backgroundColor: theme.palette.background.paper;
+    padding: 20px;
+}
+
+.constraintSection {
+    overflowY: auto;
+    maxHeight: 50vh;
+    padding: 10px;
+}
+
+.closeButtonSection {
+    marginBottom: 10px;
+    padding: 10px;
+}
+
+.full-width {
+    width: 100%;
+}

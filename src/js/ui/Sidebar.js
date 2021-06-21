@@ -1,22 +1,26 @@
 import React, {useState} from 'react';
-import clsx from 'clsx';
 import Drawer from '@material-ui/core/Drawer';
 import TabSystem from "./TabSystem"
 import MenuIcon from '@material-ui/icons/Menu';
 import {Button} from "@material-ui/core";
+import './newUI.css';
 
 export default function Sidebar() {
     const [open, setOpen] = useState(false);
 
     return (
-        <div className='sidebar'>
+        <div style={{display: 'flex', zIndex:2001}}>
             <Button
+                id='menuButtonID'
                 variant="outlined"
                 color="inherit"
-                className={clsx('menu-button', open && 'hide')}
+                className='menu-button'
                 startIcon={<MenuIcon />}
                 aria-label="open drawer"
-                onClick={() => setOpen(true)}
+                onClick={() => {
+                    setOpen(true);
+                    document.getElementById('menuButtonID').style.display = 'none';
+                }}
             >
                 Menu
             </Button>
@@ -25,9 +29,15 @@ export default function Sidebar() {
                 variant="persistent"
                 anchor="left"
                 open={open}
-                className='drawer-paper'
+                classes={{
+                    paper: 'drawer-paper',
+                }}
             >
-                <TabSystem handleDrawerClose={() => {setOpen(false)}}/>
+                <TabSystem handleDrawerClose={() => {
+                    {
+                        setOpen(false);
+                        document.getElementById('menuButtonID').style.display = 'flex';
+                    }}}/>
             </Drawer>
         </div>
     );
