@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { StyledEngineProvider } from '@material-ui/core/styles';
-import { makeStyles } from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid";
 import NewModeling from "./NewModeling/NewModeling";
 import Workspace from "./NewDataExploration/Workspace";
@@ -13,19 +11,21 @@ import CloseIcon from "@material-ui/icons/Close";
 
 export const componentIsRendering = true;
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-        width: '100%',
-        overflowX: "hidden",
-    },
-    buttonSpacing: {
-        margin: theme.spacing(3),
-    },
-    tabs: {
-        borderBottom: '2px solid #adadad',
-    },
-}));
+function useStyles() {
+    return {
+        root: {
+            flexGrow: 1,
+            width: '100%',
+            overflowX: "hidden",
+        },
+        buttonSpacing: {
+            margin: '30px',
+        },
+        tabs: {
+            borderBottom: '2px solid #adadad',
+        },
+    }
+};
 
 export default function TabSystem(props) {
     const classes = useStyles();
