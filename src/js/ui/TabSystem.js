@@ -31,7 +31,7 @@ export default function TabSystem(props) {
 
     if(componentIsRendering) console.log("|TabSystem|");
     return (
-        <div className='tab-system-root'>
+        <div className='tab-system-root full-width'>
             <div className='custom-bottom-border'>
                 <Grid
                     container
