@@ -3,21 +3,76 @@
     left: 70%;
     position: absolute;
     width: 400px;
-    backgroundColor: theme.palette.background.paper;
+    backgroundColor: #fff;
     padding: 20px;
 }
 
-.constraintSection {
+.constraint-section {
     overflowY: auto;
     maxHeight: 50vh;
     padding: 10px;
 }
 
-.closeButtonSection {
+.close-button-section {
     marginBottom: 10px;
     padding: 10px;
 }
 
 .full-width {
     width: 100%;
+}
+
+.three-quarter-width {
+    width: 75%;
+}
+
+.half-width {
+    width: 50%;
+}
+
+.center-text {
+    textAlign: center;
+}
+
+.no-wrap {
+    whiteSpace: nowrap;
+}
+
+.individual-constraint {
+    width: 100%;
+    padding: 20px;
+    marginTop: 10px;
+}
+
+.heading {
+    fontSize: 20px;
+    /*fontWeight: theme.typography.fontWeightRegular,*/
+    marginBottom: 20px;
+}
+
+.layer {
+    width: 100%;
+    margin: 10px;
+}
+
+.layer-controls {
+    padding: 20px;
+}
+
+.workspace {
+    width: 98%;
+}
+
+.workspace-controls {
+    width: 100%;
+    padding: 20px;
+    margin: 10px
+}
+
+.workspace-control-buttons {
+    marginBottom: 20px
+}
+
+.float-right {
+    float: right;
 }

@@ -4,12 +4,11 @@ import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
-import {makeStyles} from "@material-ui/core/styles";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 import IconButton from "@material-ui/core/IconButton";
 import {componentIsRendering} from "../TabSystem";
 import {isGraphable} from "./Helpers";
-import {Tooltip, withStyles} from "@material-ui/core";
+import {Tooltip} from "@material-ui/core";
 import InfoIcon from '@material-ui/icons/Info';
 
 const icon = <CheckBoxOutlineBlankIcon color="primary" fontSize="small" />;
@@ -23,27 +22,23 @@ function findLayerIndex(layerLabel, layerTitles) {
     }
 }
 
-const useStyles = makeStyles((theme) => ({
-    icon: {
-        float: 'right',
-    },
-}));
-
-const CustomTooltip = withStyles((theme) => ({
-    tooltip: {
-        fontSize: 14,
-    },
-}))(Tooltip);
+// const CustomTooltip = withStyles((theme) => ({
+//     tooltip: {
+//         fontSize: 14,
+//     },
+// }))(Tooltip);
 
 function graphIcon(layer, graphableLayers) {
     if(isGraphable(layer, graphableLayers)) {
-        return <CustomTooltip title="This dataset can be graphed" placement="right" arrow><IconButton><EqualizerIcon color="primary" /></IconButton></CustomTooltip>
+        // return <CustomTooltip title="This dataset can be graphed" placement="right" arrow><IconButton><EqualizerIcon color="primary" /></IconButton></CustomTooltip>
+        return <Tooltip title="This dataset can be graphed" placement="right" arrow><IconButton><EqualizerIcon color="primary" /></IconButton></Tooltip>
     }
 }
 
 function infoIcon(layerInfo) {
     if(layerInfo) {
-        return <CustomTooltip title={layerInfo} placement="right" arrow><IconButton><InfoIcon color="primary" /></IconButton></CustomTooltip>
+        // return <CustomTooltip title={layerInfo} placement="right" arrow><IconButton><InfoIcon color="primary" /></IconButton></CustomTooltip>
+        return <Tooltip title={layerInfo} placement="right" arrow><IconButton><InfoIcon color="primary" /></IconButton></Tooltip>
     }
 }
 
@@ -60,13 +55,12 @@ function clearWorkspace(length) {
 let oldLayers = [];
 
 export default function WorkspaceSearchbar(props) {
-    const classes = useStyles();
 
     if(componentIsRendering) {console.log("|WorkspaceSearchbar Rerending|")}
     return (
         <div>
             <Autocomplete
-                className={classes.root}
+                className='float-right'
                 multiple
                 disableCloseOnSelect
                 id="dataset-searchbar"
@@ -100,8 +94,8 @@ export default function WorkspaceSearchbar(props) {
                                 checked={props.workspace[optionIndex]}
                             />
                             {option}
-                            <span className={classes.icon}>{graphIcon(props.layers[optionIndex], props.graphableLayers)}</span>
-                            <span className={classes.icon}>{infoIcon(props.layers[optionIndex].info)}</span>
+                            <span className='float-right'>{graphIcon(props.layers[optionIndex], props.graphableLayers)}</span>
+                            <span className='float-right'>{infoIcon(props.layers[optionIndex].info)}</span>
                         </React.Fragment>
                     );
                 }}

@@ -4,6 +4,7 @@ import TabSystem from "./TabSystem"
 import MenuIcon from '@material-ui/icons/Menu';
 import {Button} from "@material-ui/core";
 import './newUI.css';
+import './NewDataExploration/newDataExploration.css';
 
 export default function Sidebar() {
     const [open, setOpen] = useState(false);

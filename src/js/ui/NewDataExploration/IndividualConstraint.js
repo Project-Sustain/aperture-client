@@ -3,26 +3,11 @@ import {Grid, Typography} from "@material-ui/core";
 import ConstraintSlider from "./ConstraintSlider";
 import ConstraintDate from "./ConstraintDate";
 import ConstraintMultiSelect from "./ConstraintMultiSelect";
-import {makeStyles} from "@material-ui/core/styles";
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        width: '100%',
-        padding: theme.spacing(2),
-        marginTop: theme.spacing(1),
-    },
-    heading: {
-        fontSize: theme.typography.pxToRem(20),
-        fontWeight: theme.typography.fontWeightRegular,
-        marginBottom: theme.spacing(1),
-    },
-}));
 
 export default function IndividualConstraint(props) {
-    const classes = useStyles();
     if(props.constraint.type === "slider") {
         return (
-            <Grid item className={classes.root}>
+            <Grid item className='individual-constraint'>
                 {!props.constraint.isDate ?
                     <ConstraintSlider constraint={props.constraint} querier={props.querier} /> :
                     <ConstraintDate constraint={props.constraint} querier={props.querier} />
@@ -33,8 +18,8 @@ export default function IndividualConstraint(props) {
 
     else if(props.constraint.type === "multiselector") {
         return (
-            <Grid item className={classes.root}>
-                <Typography className={classes.heading}>{props.constraint.label}</Typography>
+            <Grid item className='individual-constraint'>
+                <Typography className='heading'>{props.constraint.label}</Typography>
                 <ConstraintMultiSelect constraint={props.constraint} querier={props.querier}/>
             </Grid>
         );

@@ -1,13 +1,6 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Layer from "./Layer";
 import {componentIsRendering} from "../TabSystem";
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        width: '100%',
-    },
-}));
 
 function createWorkspace(workspace, layers, graphableLayers, layerTitles) {
     let workspaceLayers = [];
@@ -24,12 +17,11 @@ function createWorkspace(workspace, layers, graphableLayers, layerTitles) {
 }
 
 export default function WorkspaceLayers(props) {
-    const classes = useStyles();
     const workspaceLayers = createWorkspace(props.workspace, props.layers, props.graphableLayers, props.layerTitles);
 
     if(componentIsRendering) {console.log("|WorkspaceLayers Rerending|")}
     return (
-        <div className={classes.root}>
+        <div className='full-width'>
             {workspaceLayers}
         </div>
     );

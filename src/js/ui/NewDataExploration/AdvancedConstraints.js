@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import {Button, Paper} from "@material-ui/core";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -8,31 +7,7 @@ import {componentIsRendering} from "../TabSystem";
 import CloseIcon from '@material-ui/icons/Close';
 import Grid from "@material-ui/core/Grid";
 
-const useStyles = makeStyles((theme) => ({
-    modal: {
-        top: '20%',
-        left: '70%',
-        position: 'absolute',
-        width: 400,
-        backgroundColor: theme.palette.background.paper,
-        padding: theme.spacing(2),
-    },
-    constraintSection: {
-        overflowY: "auto",
-        maxHeight: "50vh",
-        padding: theme.spacing(1),
-    },
-    closeButtonSection: {
-        marginBottom: theme.spacing(1),
-        padding: theme.spacing(1),
-    },
-    closeButton : {
-        width: '100%',
-    },
-}));
-
 export default function AdvancedConstraints(props) {
-    const classes = useStyles();
     const [open, setOpen] = useState(false);
 
     if(componentIsRendering) {console.log("|AdvancedConstraints Rerending|")}
@@ -51,16 +26,16 @@ export default function AdvancedConstraints(props) {
             >
                 <Grid
                     id="adv-constraints"
-                    className={classes.modal}
+                    className='modal'
                     container
                     direction="column"
                     justify="center"
                     alignItems="stretch"
                 >
                     <Grid item>
-                        <Paper className={classes.closeButtonSection} elevation={3}>
+                        <Paper className='close-button-section' elevation={3}>
                             <Button
-                                className={classes.closeButton}
+                                className='full-width'
                                 startIcon={<CloseIcon/>}
                                 variant="outlined"
                                 onClick={() => setOpen(false)}
@@ -70,7 +45,7 @@ export default function AdvancedConstraints(props) {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper elevation={3} className={classes.constraintSection}>
+                        <Paper elevation={3} className='constraint-section'>
                             {props.allLayerConstraints.map((constraint, index) => {
                                 return (
                                     <div key={index}>

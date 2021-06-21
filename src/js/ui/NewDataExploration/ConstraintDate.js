@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import {componentIsRendering} from "../TabSystem";
 import { DatePicker } from '@material-ui/pickers'
@@ -15,25 +14,6 @@ const configs = {
     }
 }
 
-
-const useStyles = makeStyles({
-    root: {
-        width: '100%',
-    },
-    title: {
-        textAlign: "center",
-    },
-    nowrap: {
-        whiteSpace: "nowrap",
-    },
-    fullWidth: {
-        width: '75%',
-    },
-    halfSize: {
-        width: '50%',
-    },
-});
-
 const epochToDate = (epoch) => {
     const refrenceTime = new Date(epoch);
     return new Date(epoch + refrenceTime.getTimezoneOffset() * 60000);
@@ -44,7 +24,6 @@ const dateToEpoch = (date) => {
 }
 
 export default function ConstraintDate({constraint, querier}) {
-    const classes = useStyles();
     const min = constraint.range[0];
     const max = constraint.range[1];
     const [minMaxDate, setMinMaxDate] = useState([epochToDate(min), epochToDate(max)]);
@@ -65,19 +44,19 @@ export default function ConstraintDate({constraint, querier}) {
 
     if(componentIsRendering) {console.log("|ContraintSlider Rerending|")}
     return (
-        <div className={classes.root} id={`constraint-div-${constraint.label}`}>
+        <div className='full-width' id={`constraint-div-${constraint.label}`}>
             <Grid container direction="row" justify="center" alignItems="center">
                 <Grid item>
-                    <Typography className={classes.title} id={`date-picker-${constraint.label}`} gutterBottom>
+                    <Typography className='center-text' id={`date-picker-${constraint.label}`} gutterBottom>
                         {/*<strong>{constraint.label}:</strong> &nbsp;*/}
-                        <span className={classes.nowrap}>{minMaxDate[0].toDateString()} - {minMaxDate[1].toDateString()}</span>
+                        <span className='no-wrap'>{minMaxDate[0].toDateString()} - {minMaxDate[1].toDateString()}</span>
                     </Typography>
                 </Grid>
             </Grid>
             <Grid container direction="row" justify="center" alignItems="center">
-                <Grid item className={classes.halfSize}>
+                <Grid item className='half-width'>
                     <DatePicker
-                        className={classes.fullWidth}
+                        className='three-quarter-width'
                         {...config}
                         label="Min Date"
                         value={minMaxDate[0]}
@@ -88,9 +67,9 @@ export default function ConstraintDate({constraint, querier}) {
                         }}
                     />
                 </Grid>
-                <Grid item className={classes.halfSize}>
+                <Grid item className='half-width'>
                     <DatePicker
-                        className={classes.fullWidth}
+                        className='three-quarter-width'
                         {...config}
                         label="Max Date"
                         value={minMaxDate[1]}

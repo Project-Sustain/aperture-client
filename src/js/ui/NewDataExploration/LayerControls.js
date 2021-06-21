@@ -6,14 +6,7 @@ import TuneIcon from '@material-ui/icons/Tune';
 import AdvancedConstraints from "./AdvancedConstraints";
 import {componentIsRendering} from "../TabSystem";
 import {isGraphable} from "./Helpers";
-import {makeStyles} from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        padding: theme.spacing(2),
-    },
-}));
 
 function graphIcon(layer, graphableLayers) {
     if(isGraphable(layer, graphableLayers)) {
@@ -36,10 +29,9 @@ function getLayerText(layerInfo) {
 }
 
 export default function LayerControls(props) {
-    const classes = useStyles();
     if(componentIsRendering) {console.log("|LayerControls Rerending|")}
     return (
-        <Paper elevation={3} className={classes.root}>
+        <Paper elevation={3} className='layer-controls'>
             <Grid
                 container
                 direction="row"

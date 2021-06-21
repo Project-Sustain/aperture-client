@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import WorkspaceControls from "./WorkspaceControls";
 import WorkspaceLayers from "./WorkspaceLayers";
 import AutoMenu from "../../library/autoMenu";
@@ -8,18 +7,11 @@ import Query from "../../library/Query";
 import Util from "../../library/apertureUtil";
 import Grid from "@material-ui/core/Grid";
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        width: '98%',
-    },
-}));
-
 function prettifyJSON(name) {
     return Util.capitalizeString(Util.underScoreToSpace(name));
 }
 
 export default function Workspace() {
-    const classes = useStyles();
 
     const [layers, setLayers] = useState([]);
     const [workspace, setWorkspace] = useState([]);
@@ -67,17 +59,17 @@ export default function Workspace() {
     if(componentIsRendering) {console.log("|Workspace Rerending|")}
     return (
         <Grid
-            className={classes.root}
+            className='workspace'
             container
             direction="column"
             justify="center"
             alignItems="center"
         >
-            <Grid item className={classes.root}>
+            <Grid item className='workspace'>
                 <WorkspaceControls layers={layers} graphableLayers={graphableLayers} layerTitles={layerTitles}
                                    workspace={workspace} setWorkspace={setWorkspace} />
             </Grid>
-            <Grid item className={classes.root}>
+            <Grid item className='workspace'>
                 <WorkspaceLayers layers={layers} graphableLayers={graphableLayers} layerTitles={layerTitles} workspace={workspace} />
             </Grid>
         </Grid>

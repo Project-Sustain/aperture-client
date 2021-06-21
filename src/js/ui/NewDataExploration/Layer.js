@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -10,13 +9,6 @@ import LayerControls from "./LayerControls";
 import {componentIsRendering} from "../TabSystem";
 import AutoQuery from '../../library/autoQuery';
 import IndividualConstraint from "./IndividualConstraint"
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        width: '100%',
-        margin: theme.spacing(1),
-    },
-}));
 
 function extractLayerConstraints(layer) {
     let defaultLayerConstraints = [];
@@ -30,14 +22,14 @@ function extractLayerConstraints(layer) {
     return [defaultLayerConstraints, allLayerConstraints];
 }
 
-function createConstraints(activeLayerConstraints, allLayerConstraints, classes, querier) {
+function createConstraints(activeLayerConstraints, allLayerConstraints, querier) {
     let constraints = [];
     activeLayerConstraints.forEach((constraint, index) => {
         if(constraint) {
             constraints.push(
                 <div key={index}>
                     <Paper elevation={3}>
-                        <IndividualConstraint constraint={allLayerConstraints[index]} classes={classes} querier={querier} />
+                        <IndividualConstraint constraint={allLayerConstraints[index]} querier={querier} />
                     </Paper>
                 </div>
             );
@@ -47,7 +39,6 @@ function createConstraints(activeLayerConstraints, allLayerConstraints, classes,
 }
 
 export default function Layer(props) {
-    const classes = useStyles();
     const [check, setCheck] = useState(false);
     const [layerExpanded, setLayerExpanded] = useState(false);
 
@@ -62,11 +53,11 @@ export default function Layer(props) {
         }
     }, [querier]);
 
-    const constraints = createConstraints(activeLayerConstraints, allLayerConstraints, classes, querier);
+    const constraints = createConstraints(activeLayerConstraints, allLayerConstraints, querier);
 
     if(componentIsRendering) console.log("|Layer|");
     return (
-        <div className={classes.root}>
+        <div className='layer'>
             <Paper elevation={3}>
                 <Accordion
                     color="primary"
