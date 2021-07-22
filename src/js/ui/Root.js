@@ -65,7 +65,7 @@ import GlobalTheme from './global/GlobalTheme'
 import GoTo from './widgets/GoTo'
 import Sidebar from './Sidebar'
 import ConditionalWidgetRendering from './ConditionalWidgetRendering'
-import Popup from './widgets/Popup';
+import Popup from './widgets/Popup/Popup';
 
 const Root = ({ map }) => {
     const defaultState = {

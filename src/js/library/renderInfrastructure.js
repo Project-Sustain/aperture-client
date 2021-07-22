@@ -133,9 +133,10 @@ export default class RenderInfrastructure {
         let layers = [];
         const newLayer = L.geoJson(geoJsonData, {
             style: function (feature) {
-                let weight = 1;
-                let fillOpacity = 0.2;
+                let weight = Util.getFeatureType(feature) === Util.FEATURETYPE.lineString ? 3 : 1;
+                let fillOpacity = 0.35;
                 let name = Util.getNameFromGeoJsonFeature(feature, indexData);
+
                 if (datasource[name] && datasource[name]["border"] !== null && datasource[name]["border"] !== undefined)
                     weight = datasource[name]["border"];
                 if (datasource[name] && datasource[name]["opacity"] !== null && datasource[name]["opacity"] !== undefined)
@@ -207,11 +208,15 @@ export default class RenderInfrastructure {
         const index = this.gisjoinIndex(GISJOIN);
         const oldName = Object.keys(indexData)[0];
 
+        const colorInfo = geojson.properties.colorInfo;
+
         const thisRef = {
             name: oldName,
             indexData: JSON.parse(JSON.stringify(indexData)),
             properties: JSON.parse(JSON.stringify(geojson.properties))
         };
+
+        thisRef.properties.colorInfo = colorInfo;
 
         if (index === -1) {
             this.currentGISJOINLayers.push({
@@ -278,9 +283,27 @@ export default class RenderInfrastructure {
             return {
                 ...acc,
                 ...curr.properties,
-                meta: { ...acc.meta, ...curr.properties.meta }
+                meta: { ...acc.meta, ...curr.properties.meta },
+                colorInfo: {
+                    ...acc.colorInfo, ...curr.properties.colorInfo,
+                    validColorFieldNames: [...acc?.colorInfo?.validColorFieldNames, ...curr.properties.colorInfo.validColorFieldNames],
+                    subscribeToColorFieldNameChange: (func) => {
+                        curr.properties.colorInfo.subscribeToColorFieldNameChange(func);
+                        acc?.colorInfo?.subscribeToColorFieldNameChange(func)
+                    },
+                    updateColorFieldName: (name) => {
+                        curr.properties.colorInfo.updateColorFieldName(name);
+                        acc.colorInfo.updateColorFieldName(name)
+                    }
+                }
             }
-        }, {});
+        }, {
+            colorInfo: {
+                validColorFieldNames: [],
+                subscribeToColorFieldNameChange: () => {},
+                updateColorFieldName: (name) => {}
+            }
+        });
     }
 
     gisjoinUpdateLayer(geojson, layerID) {
@@ -426,10 +449,20 @@ export default class RenderInfrastructure {
      * @param {string} address
      * @returns {object} leaflet icon
      */
-    makeIcon(address) {
-        const icon = new L.Icon({
-            iconUrl: address,
-            iconSize: this.options.iconSize
+    makeIcon(address, color) {
+        const iconHTML = document.createElement('img')
+        const iconMargin = 6;
+        const iconSize = 40;
+        iconHTML.setAttribute('src', address);
+        iconHTML.setAttribute('width', iconSize)
+        iconHTML.setAttribute('height', iconSize)
+        iconHTML.style.padding = `${iconMargin}px`
+        iconHTML.style.backgroundColor = color ?? 'white';
+        iconHTML.style.borderRadius = `${iconSize / 2}px`
+
+        const icon = new L.DivIcon({
+            className: '',
+            html: iconHTML
         });
         return icon;
     }
@@ -452,7 +485,7 @@ export default class RenderInfrastructure {
             }
             else {
                 if (datasource[tag]["iconAddr"]) {
-                    return this.makeIcon(datasource[tag]["iconAddr"]);
+                    return this.makeIcon(datasource[tag]["iconAddr"], indexData[Object.keys(indexData)[0]].color ?? 'white');
                 }
             }
         }

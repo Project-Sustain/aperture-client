@@ -60,6 +60,7 @@ import Gradient from "../third-party/Gradient"
 import MapDataFilterWrapper from "./mapDataFilterWrapper"
 import Util from "./apertureUtil"
 import Query from "./Query"
+import Color from "./Color"
 
 /**
  * @class AutoQuery
@@ -90,6 +91,7 @@ export default class AutoQuery {
 
         this.streams = [];
         this.mapLayers = [];
+        this.currentGeoJSON = [];
         this.layerIDs = new Set();
         this.currentQueries = new Set();
 
@@ -99,18 +101,23 @@ export default class AutoQuery {
 
         this.linked = this.data.linkedGeometry ? true : false;
 
-        if(layerData.temporal){
+        if (layerData.temporal) {
             this.temporal = layerData.temporal;
             this.temporalFields = Object.entries(layerData.constraints)
                 .filter(([constraintName, constraint]) => constraint.temporalType != null)
                 .reduce((acc, [constraintName, constraint]) => {
-                    return {...acc, [constraintName]: constraint.temporalType}
+                    return { ...acc, [constraintName]: constraint.temporalType }
                 }, {});
         }
 
+        this.colorFieldChangeSubscribers = [];
         this.color = layerData.color;
-        this.colorStyle = layerData.color.style;
-        this.colorCode = this.buildColorCode(layerData);
+        if(this.color.variable){
+            this.changeColorCodeField(this.color.variable, this.color)
+        }
+        else {
+            this.changeColorCodeField(Object.keys(this.data.constraints)[0])
+        }
 
         this.graphPipeID = graphPipeID;
 
@@ -119,12 +126,12 @@ export default class AutoQuery {
                 "tracts" : "counties"
             : this.data.label ?
                 this.data.label : Util.cleanUpString(this.collection);
-        
-        if(this.data.linkedGeometry === "neon_sites"){ //edge case for now
+
+        if (this.data.linkedGeometry === "neon_sites") { //edge case for now
             this.blockerGroup = "Neon Sites";
         }
-                
-        if(this.blockerGroup.charAt(this.blockerGroup.length-1) !== "s"){
+
+        if (this.blockerGroup.charAt(this.blockerGroup.length - 1) !== "s") {
             this.blockerGroup += "s";
         }
 
@@ -162,6 +169,7 @@ export default class AutoQuery {
         this.checkAndDispatch(oldBlockers);
 
         this.layerIDs.clear()
+        this.currentGeoJSON = [];
         this.enabled = false;
         this.geohashCache = [];
         MapDataFilterWrapper.removeCollection(this.collection);
@@ -229,11 +237,34 @@ export default class AutoQuery {
       * @memberof AutoQuery
       * @method killCurrentQueries
       */
-    killCurrentQueries(){
-        for(const qid of [...this.currentQueries]){
+    killCurrentQueries() {
+        for (const qid of [...this.currentQueries]) {
             Query.killQuery(qid);
         }
         this.currentQueries.clear();
+    }
+
+    changeColorCodeField(fieldName, predefinedColor=null) {
+        if(fieldName === this.color.variable){
+            predefinedColor = this.color;
+        }
+        const colorField = this.data.constraints[fieldName] ?? this.data.constraints[`properties.${fieldName}`]
+        if(colorField){
+            this.colorField = { name: fieldName, label: colorField.label };
+
+            if (colorField?.type === "slider") {
+                this.protoColor = new Color("numeric", colorField.range, predefinedColor);
+            }
+            else if (colorField?.type === "multiselector") {
+                this.protoColor = new Color("string", colorField.options, predefinedColor);
+            }
+            this.colorFieldChangeSubscribers.forEach(func => func(this.colorField))
+            this.clearMapLayers();
+            const currentGeoJSONCopy = JSON.parse(JSON.stringify(this.currentGeoJSON))
+            this.currentGeoJSON = []
+            MapDataFilterWrapper.removeCollection(this.collection);
+            currentGeoJSONCopy.forEach(geoJSON => this.renderGeoJSON(geoJSON))
+        }
     }
 
     /**
@@ -286,17 +317,17 @@ export default class AutoQuery {
         let id;
         const callback = (d) => {
             const { event, payload } = d;
-            if(event === "data"){
+            if (event === "data") {
                 this.renderGeoJSON(payload.data);
             }
-            else if(event === "info"){
+            else if (event === "info") {
                 payload.geohashes && this.geohashCache.push(...payload.geohashes);
-                if(payload.id) { 
+                if (payload.id) {
                     id = payload.id;
-                    this.currentQueries.add(payload.id); 
+                    this.currentQueries.add(payload.id);
                 }
             }
-            else if(event === "end"){
+            else if (event === "end") {
                 this.currentQueries.delete(id);
             }
         }
@@ -388,6 +419,13 @@ export default class AutoQuery {
         }
 
         data.properties.meta = this.buildMetaMap();
+        data.properties.colorInfo = {
+            currentColorField: this.colorField,
+            updateColorFieldName: this.changeColorCodeField.bind(this),
+            validColorFieldNames: Object.keys(this.data.constraints).map(Util.removePropertiesPrefix),
+            subscribeToColorFieldChange: this.subscribeToColorFieldChange.bind(this),
+            colorSummary: () => { return this.protoColor.getColorSummary() }
+        }
 
         if (this.getIcon())
             indexData[this.collection]["iconAddr"] = `./images/map-icons/${this.getIcon()}.png`;
@@ -395,8 +433,13 @@ export default class AutoQuery {
         indexData[this.collection]["border"] = this.color.border;
         indexData[this.collection]["opacity"] = this.color.opacity;
         this.mapLayers = this.mapLayers.concat(window.renderInfrastructure.renderGeoJson(data, indexData));
+        this.currentGeoJSON.push(data)
         this.layerIDs.add(id);
 
+    }
+
+    subscribeToColorFieldChange (func) {
+        this.colorFieldChangeSubscribers.push(func)
     }
 
     /**
@@ -418,7 +461,7 @@ export default class AutoQuery {
       */
     buildConstraintPipeline() {
         let pipeline = [];
-        if(this.temporal){
+        if (this.temporal) {
             pipeline = this.buildTemporalPreProcess();
         }
         for (const constraintName in this.constraintState) {
@@ -439,19 +482,19 @@ export default class AutoQuery {
     buildTemporalPreProcess() {
         let groupStage = {
             _id: `$${this.data.joinField}`,
-            [this.data.joinField]: {"$first": `$${this.data.joinField}`}
+            [this.data.joinField]: { "$first": `$${this.data.joinField}` }
         }
-        const fieldsNotGrouped = Object.keys(this.data.constraints).filter(name => !Object.keys(this.temporalFields).includes(name)) 
-        for(const field of fieldsNotGrouped){
-            groupStage[field] = {"$first": `$${field}`}
+        const fieldsNotGrouped = Object.keys(this.data.constraints).filter(name => !Object.keys(this.temporalFields).includes(name))
+        for (const field of fieldsNotGrouped) {
+            groupStage[field] = { "$first": `$${field}` }
         }
-        for(const [field, type] of Object.entries(this.temporalFields)){
-            groupStage[field] = { [`$${type}`]: `$${field}`}
+        for (const [field, type] of Object.entries(this.temporalFields)) {
+            groupStage[field] = { [`$${type}`]: `$${field}` }
         }
         groupStage = {
             "$group": groupStage
         }
-        
+
         return [{ "$match": this.buildConstraint(this.temporal, this.constraintData[this.temporal]) }, groupStage]
     }
 
@@ -553,54 +596,9 @@ export default class AutoQuery {
       * @returns {string} hex color code
       */
     getColor(properties) {
-        let value;
-        if (this.color.variable) {
-            const propsVarName = Util.removePropertiesPrefix(this.color.variable);
-            value = properties[propsVarName];
-        }
-        const skew = this.color.skew != null ? this.color.skew + 1 : 1;
-        const skewDir = this.color.skewDir != null ? this.color.skewDir : "right";
-        switch (this.colorStyle) {
-            case "solid":
-                return this.colorCode;
-            case "gradient":
-                const range = this.getConstraintMetadata(this.color.variable).range;
-                const normalizedValue = Math.min(Math.max((value - range[0]) / (range[1] - range[0]), 0), 0.9999999);
-                const skewCorrectedValue = skewDir === "right" ? (1 - (Math.pow(1 - normalizedValue, skew))) : Math.pow(normalizedValue, skew); // https://www.desmos.com/calculator/gezo3xfbfj
-                const colorindex = Math.floor(skewCorrectedValue * 32); //normalizes value on range. results in #0 - 31
-                return this.colorCode[colorindex];
-            case "sequential":
-                if (this.color.map)
-                    return this.color.map[value];
-                else {
-                    const index = this.getConstraintMetadata(this.color.variable).options.indexOf(value);
-                    return this.colorCode[index];
-                }
-        }
-    }
-
-    /**
-      * Builds a color code/spectrum for the layer
-      * @memberof AutoQuery
-      * @method buildColorCode
-      * @returns {?} color code or spectrum which is relevant to the layer
-      */
-    buildColorCode() {
-        const colorGradient = new Gradient();
-        switch (this.colorStyle) {
-            case "solid":
-                return this.data.color.colorCode;
-            case "gradient":
-                const colors = this.color.gradient ? this.color.gradient : ["#FF0000", "#00FF00"];
-                colorGradient.setGradient(colors[0], colors[1]);
-                colorGradient.setMidpoint(32);
-                return colorGradient.getArray();
-            case "sequential":
-                const numOptions = this.data.constraints[this.data.color.variable].options.length;
-                colorGradient.setGradient("#FF0000", "#00FF00");
-                colorGradient.setMidpoint(numOptions);
-                return colorGradient.getArray();
-        }
+        const propsVarName = Util.removePropertiesPrefix(this.colorField.name);
+        const value = properties[propsVarName];
+        return this.protoColor?.getColor(value)
     }
 }
 

@@ -56,82 +56,99 @@ You may add Your own copyright statement to Your modifications and may provide a
 
 END OF TERMS AND CONDITIONS
 */
-import Util from "../../library/apertureUtil";
-import fipsToState from "../../../json/fipsToState.json"
-import defaultImportantFields from "../../../json/defaultImportantFields.json"
+import React, { useEffect } from "react";
+import { Table, TableContainer, TableHead, TableCell, TableRow, TableBody, Paper, makeStyles, Grid } from "@material-ui/core";
+import { keyToDisplay, valueToDisplay, keyValueIsValid } from "./PopupUtils";
+import PopupTableEntry from "./PopupTableEntry"
+import useHover from "../../hooks/useHover";
+import Util from "../../../library/apertureUtil"
+import * as d3 from '../../../third-party/d3.min.js';
 
-export const keyToDisplay = (obj, key) => {
-    if (obj?.meta?.[key]?.label) {
-        return obj.meta[key].label;
-    }
-    if (defaultImportantFields[key]) {
-        return defaultImportantFields[key].label ?? Util.cleanUpString(key);
-    }
+export default React.memo(function PopupColorInfo({ colorFieldName, colorSummary, obj }) {
+    const svgRef = React.createRef();
+    useEffect(() => {
+        if (colorSummary.minMax) {
+            const width = 350;
+            const height = 85;
+            const marginBottom = 20;
+            const marginLeftRight = 10;
+            const svg = d3.select(svgRef.current);
+            svg.selectAll('*').remove();
+            svg.attr("viewBox", [0, 0, width, height]);
 
-    return Util.cleanUpString(key);
-}
+            const linearGradient = svg.append("defs")
+                .append("linearGradient")
+                .attr("id", "linear-gradient");
 
-export const valueToDisplay = (obj, key, value) => {
-    let unit = obj?.meta?.[key]?.unit;
-    if (unit?.toUpperCase() === 'NA') {
-        unit = null;
-    }
+            const gradientLength = colorSummary.gradient.length;
 
-    if (obj?.meta?.[key]?.isDate) {
-        return dateToDisplay(value);
-    }
-    else if (defaultImportantFields[key]?.type && !['string', 'number'].includes(defaultImportantFields[key]?.type)) {
-        return specialTypeToDisplay(defaultImportantFields[key].type, value);
-    }
-    else if (['string', 'number'].includes(typeof value)) {
-        return `${value}${unit ? ` ${Util.cleanUpString(unit)}` : ''}`;
-    }
-    else if (typeof value === 'object') {
-        return mongoObjectToSomething(value, (s) => s);
-    }
-    else {
-        return JSON.stringify(value);
-    }
-}
+            for (let i = 0; i < gradientLength; i++) {
+                linearGradient.append("stop")
+                    .attr("offset", `${Math.round(i * 100 / gradientLength)}%`)
+                    .attr("stop-color", colorSummary.gradient[i]);
+            }
 
-export const keyValueIsValid = (key, value) => {
-    if (['meta', 'id', '_id'].includes(key)) {
-        return false;
-    }
-    return true;
-}
+            //add gradient
+            svg.append("rect")
+                .attr("transform", `translate(${marginLeftRight},0)`)
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", width - marginLeftRight * 2)
+                .attr("height", height - marginBottom)
+                .style("fill", "url(#linear-gradient)");
 
-const specialTypeToDisplay = (type, value) => {
-    if (type === "stateFips") {
-        return fipsToState[value];
-    }
-}
+            //add line
+            const value = obj.properties[colorFieldName];
+            const xValue = (width - marginLeftRight * 2) * Math.min(Math.max((value - colorSummary.minMax[0]) / (colorSummary.minMax[1] - colorSummary.minMax[0]), 0), 1) + marginLeftRight;
+            svg.append('line')
+                .style("stroke", "black")
+                .style("stroke-width", 3)
+                .attr("x1", xValue)
+                .attr("y1", 0)
+                .attr("x2", xValue)
+                .attr("y2", height - marginBottom);
 
-const mongoObjectToSomething = (object, func) => { //this function will be extended as more mongo objects leak in
-    const numericTypes = ['$numberLong', '$numberDecimal'];
-    for (const numericType of numericTypes) {
-        if (object?.[numericType]) {
-            return func(Number(object[numericType]));
+            //add axis
+            const linearScale = d3.scaleLinear()
+                .domain(d3.extent(colorSummary.minMax))
+                .range([0, width - marginLeftRight * 2])
+                .nice()
+            const axis = d3.axisBottom(linearScale).ticks(5);
+            svg.append('g').attr("transform", `translate(${marginLeftRight},${height - marginBottom})`).call(axis);
         }
-    }
-    return JSON.stringify(object);
-}
+    }, [colorSummary]);
 
-const dateToDisplay = (value) => {
-    if (typeof value === 'number') {
-        return epochToDateString(value);
+    if (colorSummary.minMax) {
+        return <Grid container>
+            <Grid item xs={12}>
+                <svg ref={svgRef}></svg>
+            </Grid>
+        </Grid>
     }
-    else if (typeof value === 'object') {
-        return mongoObjectToDateString(value);
+    else if (colorSummary.colorMapping) {
+        return <TableContainer component={Paper}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Value</TableCell>
+                        <TableCell>Color</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {Object.entries(colorSummary.colorMapping).map(([value, color]) => {
+                        const isThisValue = value === obj.properties[Util.removePropertiesPrefix(colorFieldName)];
+                        const rowStyle = {}
+                        if (isThisValue) {
+                            rowStyle.backgroundColor = '#dedede'
+                        }
+                        return <TableRow style={rowStyle} key={value}>
+                            <TableCell>{isThisValue ? <b>{value}</b> : value}</TableCell>
+                            <TableCell><div style={{ backgroundColor: color, height: '25px', border: '1px solid black' }} /></TableCell>
+                        </TableRow>
+                    })}
+                </TableBody>
+            </Table>
+        </TableContainer>
     }
-    return JSON.stringify(value)
-}
-
-const epochToDateString = (epoch) => {
-    const str = new Date(epoch).toUTCString();
-    return str.substr(0, str.length - 4);
-}
-
-const mongoObjectToDateString = (object) => {
-    return mongoObjectToSomething(object, epochToDateString);
-}
+    return <div></div>
+});

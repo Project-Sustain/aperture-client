@@ -56,38 +56,27 @@ You may add Your own copyright statement to Your modifications and may provide a
 
 END OF TERMS AND CONDITIONS
 */
-import React, {useState} from 'react';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import {componentIsRendering} from "../TabSystem";
-import Util from "../../library/apertureUtil"
+//from https://usehooks.com/useHover/
+import React, { useState, useRef, useEffect } from "react";
 
-function updateLayerConstraints(activeLayerConstraints, index) {
-    let tempActiveConstraints = [...activeLayerConstraints];
-    tempActiveConstraints[index] = !tempActiveConstraints[index];
-    return tempActiveConstraints;
-}
-
-export default function AdvancedConstraintCheckbox(props) {
-    const [check, setCheck] = useState(props.activeLayerConstraints[props.constraintIndex]);
-
-    if(componentIsRendering) {console.log("|AdvancedContraintCheckbox Rerending|")}
-    return (
-        <FormGroup>
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={check}
-                        onChange={() => {
-                            setCheck(!check);
-                            props.setActiveLayerConstraints(updateLayerConstraints(props.activeLayerConstraints, props.constraintIndex));
-                        }}
-                        color="primary"
-                    />
-                }
-                label={props.constraint.label ?? Util.cleanUpString(props.constraint.name)}
-            />
-        </FormGroup>
+export default function useHover() {
+    const [value, setValue] = useState(false);
+    const ref = useRef(null);
+    const handleMouseOver = () => setValue(true);
+    const handleMouseOut = () => setValue(false);
+    useEffect(
+        () => {
+            const node = ref.current;
+            if (node) {
+                node.addEventListener("mouseover", handleMouseOver);
+                node.addEventListener("mouseout", handleMouseOut);
+                return () => {
+                    node.removeEventListener("mouseover", handleMouseOver);
+                    node.removeEventListener("mouseout", handleMouseOut);
+                };
+            }
+        },
+        [ref.current] // Recall only if ref changes
     );
+    return [ref, value];
 }

@@ -61,6 +61,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 import {componentIsRendering} from "../TabSystem";
+import Util from "../../library/apertureUtil"
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -100,7 +101,7 @@ export default function ConstraintSlider({constraint, querier}) {
     return (
         <div className={classes.root} id={`constraint-div-${constraint.label}`}>
             <Typography className={classes.title} id={`range-slider-${constraint.label}`} gutterBottom>
-                {constraint.label} &nbsp;
+                {constraint.label ?? Util.cleanUpString(constraint.name)} &nbsp;
                 <span className={classes.nowrap}>{buildSliderLabel()}</span>
             </Typography>
             <Slider

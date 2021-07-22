@@ -56,38 +56,106 @@ You may add Your own copyright statement to Your modifications and may provide a
 
 END OF TERMS AND CONDITIONS
 */
-import React, {useState} from 'react';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import {componentIsRendering} from "../TabSystem";
-import Util from "../../library/apertureUtil"
+import React, { useEffect, useState } from "react";
+import { makeStyles, Typography } from "@material-ui/core";
+import Query from "../../../library/Query";
+import { ResponsiveLineCanvas } from '@nivo/line'
+import Util from "../../../library/apertureUtil";
 
-function updateLayerConstraints(activeLayerConstraints, index) {
-    let tempActiveConstraints = [...activeLayerConstraints];
-    tempActiveConstraints[index] = !tempActiveConstraints[index];
-    return tempActiveConstraints;
-}
+const useStyles = makeStyles({
+    root: {
+        height: '300px'
+    },
+    tooltip: {
+        backgroundColor: 'white',
+        padding: '2.5px',
+        borderRadius: '2.5px'
+    }
+});
 
-export default function AdvancedConstraintCheckbox(props) {
-    const [check, setCheck] = useState(props.activeLayerConstraints[props.constraintIndex]);
+//react.memo means this wont re-render unless the props change
+export default React.memo(function PopupTimeChart({ collection, join, fieldToChart, temporalRange }) {
+    const [data, setData] = useState([]);
 
-    if(componentIsRendering) {console.log("|AdvancedContraintCheckbox Rerending|")}
-    return (
-        <FormGroup>
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={check}
-                        onChange={() => {
-                            setCheck(!check);
-                            props.setActiveLayerConstraints(updateLayerConstraints(props.activeLayerConstraints, props.constraintIndex));
-                        }}
-                        color="primary"
-                    />
+    useEffect(async () => {
+        const pipe = [
+            { $match: join },
+            {
+                $match:
+                {
+                    epoch_time: {
+                        $gte: temporalRange[0],
+                        $lte: temporalRange[1]
+                    }
                 }
-                label={props.constraint.label ?? Util.cleanUpString(props.constraint.name)}
+            },
+            { $sample: { size: 1000 } },
+            { $project: { [fieldToChart]: 1, epoch_time: 1, [Object.keys(join)[0]]: 1 } }
+        ];
+        const d = await Query.makeQuery({
+            collection,
+            pipeline: pipe,
+            dontLink: true
+        })
+        setData(d.data.map(p => {
+            if (typeof p.epoch_time === 'object') {
+                p.epoch_time = p.epoch_time.$numberLong ? Number(p.epoch_time.$numberLong) : Number(p.epoch_time.$numberDecimal)
+            }
+            return { x: p.epoch_time, y: p[fieldToChart] }
+        }).sort((a, b) => a.x - b.x));
+        // .map(p => {
+        //     p.x = new Date(p.x);
+        //     return p;
+        // }));
+    }, []);
+
+    const epochTimeToShortString = (value) => {
+        const offset = new Date(value).getTimezoneOffset() * 60000
+        return new Date(value + offset).toLocaleDateString("en-US");
+    }
+
+    const classes = useStyles();
+
+    const renderChart = (data) => {
+        if (data.length) {
+            const bottomTicks = data.filter((d, i) => i % Math.floor(data.length / 4) === 0 || i === data.length - 1).map(d => d.x);
+            return <ResponsiveLineCanvas
+                data={[
+                    {
+                        id: collection,
+                        data
+                    }
+                ]}
+                margin={{ top: 20, right: 50, bottom: 50, left: 50 }}
+                yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: true, reverse: false }}
+                curve="cardinal"
+                colors="rgb(27, 158, 119)"
+                axisTop={null}
+                isInteractive={true}
+                enablePoints={data.length < 50}
+                enableGridX={false}
+                enableGridY={false}
+                axisLeft={{
+                    legend: Util.cleanUpString(fieldToChart),
+                    legendOffset: -39
+                }}
+                axisBottom={{
+                    legend: "Date",
+                    legendOffset: 36,
+                    format: epochTimeToShortString,
+                    tickValues: bottomTicks
+                }}
+                tooltip={(e) => {
+                    return <div className={classes.tooltip}>
+                        <Typography gutterBottom>{`Date: ${epochTimeToShortString(e.point.data.x)}`}</Typography>
+                        <Typography>{`${Util.cleanUpString(fieldToChart)}: ${e.point.data.y}`}</Typography>
+                    </div>
+                }}
             />
-        </FormGroup>
-    );
-}
+        }
+    }
+
+    return <div className={classes.root}>
+        {renderChart(data)}
+    </div>
+});

@@ -56,38 +56,82 @@ You may add Your own copyright statement to Your modifications and may provide a
 
 END OF TERMS AND CONDITIONS
 */
-import React, {useState} from 'react';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import {componentIsRendering} from "../TabSystem";
-import Util from "../../library/apertureUtil"
+import Util from "../../../library/apertureUtil";
+import fipsToState from "../../../../json/fipsToState.json"
+import defaultImportantFields from "../../../../json/defaultImportantFields.json"
 
-function updateLayerConstraints(activeLayerConstraints, index) {
-    let tempActiveConstraints = [...activeLayerConstraints];
-    tempActiveConstraints[index] = !tempActiveConstraints[index];
-    return tempActiveConstraints;
+export const keyToDisplay = (obj, key) => {
+    if (obj?.meta?.[key]?.label) {
+        return obj.meta[key].label;
+    }
+    if (defaultImportantFields[key]) {
+        return defaultImportantFields[key].label ?? Util.cleanUpString(key);
+    }
+
+    return Util.cleanUpString(key);
 }
 
-export default function AdvancedConstraintCheckbox(props) {
-    const [check, setCheck] = useState(props.activeLayerConstraints[props.constraintIndex]);
+export const valueToDisplay = (obj, key, value) => {
+    let unit = obj?.meta?.[key]?.unit;
+    if (unit?.toUpperCase() === 'NA') {
+        unit = null;
+    }
 
-    if(componentIsRendering) {console.log("|AdvancedContraintCheckbox Rerending|")}
-    return (
-        <FormGroup>
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={check}
-                        onChange={() => {
-                            setCheck(!check);
-                            props.setActiveLayerConstraints(updateLayerConstraints(props.activeLayerConstraints, props.constraintIndex));
-                        }}
-                        color="primary"
-                    />
-                }
-                label={props.constraint.label ?? Util.cleanUpString(props.constraint.name)}
-            />
-        </FormGroup>
-    );
+    if (obj?.meta?.[key]?.isDate) {
+        return dateToDisplay(value);
+    }
+    else if (defaultImportantFields[key]?.type && !['string', 'number'].includes(defaultImportantFields[key]?.type)) {
+        return specialTypeToDisplay(defaultImportantFields[key].type, value);
+    }
+    else if (['string', 'number'].includes(typeof value)) {
+        return `${value}${unit ? ` ${Util.cleanUpString(unit)}` : ''}`;
+    }
+    else if (typeof value === 'object') {
+        return mongoObjectToSomething(value, (s) => s);
+    }
+    else {
+        return JSON.stringify(value);
+    }
+}
+
+export const keyValueIsValid = (key, value) => {
+    if (['meta', 'id', '_id', 'colorInfo'].includes(key)) {
+        return false;
+    }
+    return true;
+}
+
+const specialTypeToDisplay = (type, value) => {
+    if (type === "stateFips") {
+        return fipsToState[value];
+    }
+}
+
+const mongoObjectToSomething = (object, func) => { //this function will be extended as more mongo objects leak in
+    const numericTypes = ['$numberLong', '$numberDecimal'];
+    for (const numericType of numericTypes) {
+        if (object?.[numericType]) {
+            return func(Number(object[numericType]));
+        }
+    }
+    return JSON.stringify(object);
+}
+
+const dateToDisplay = (value) => {
+    if (typeof value === 'number') {
+        return epochToDateString(value);
+    }
+    else if (typeof value === 'object') {
+        return mongoObjectToDateString(value);
+    }
+    return JSON.stringify(value)
+}
+
+const epochToDateString = (epoch) => {
+    const str = new Date(epoch).toUTCString();
+    return str.substr(0, str.length - 4);
+}
+
+const mongoObjectToDateString = (object) => {
+    return mongoObjectToSomething(object, epochToDateString);
 }

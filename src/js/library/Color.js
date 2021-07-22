@@ -56,41 +56,102 @@ You may add Your own copyright statement to Your modifications and may provide a
 
 END OF TERMS AND CONDITIONS
 */
-import React from "react";
-import { Table, TableContainer, TableHead, TableCell, TableRow, TableBody, Paper, makeStyles } from "@material-ui/core";
-import { keyToDisplay, valueToDisplay, keyValueIsValid } from "./PopupUtils";
+import Gradient from "../third-party/Gradient"
 
-const drawerWidth = '450px';
+/**
+ * @class Color
+ * @file Takes some parameters about a field in constructor, has a method for getting the color of a field based on whatever value is present.
+ * @author Daniel Reynolds
+ */
 
-const useStyles = makeStyles({
-    table: {
-        maxWidth: drawerWidth,
+export const defaultGradient = ["#c7445d", "#e07069", "#f0d55d", "#509bc7", "#4d6dbd"];
+
+export default class Color {
+    constructor(fieldType = "numeric", optionsOrMinMax = null, predefinedColor = null) {
+        if (fieldType === "numeric") {
+            this.minMax = optionsOrMinMax
+        }
+        else {
+            this.options = optionsOrMinMax
+        }
+
+        if (predefinedColor) {
+            this._setKnowns(predefinedColor)
+        }
+        else {
+            this._setDefaults(fieldType)
+        }
+
+        this.fieldType = fieldType;
+
     }
-});
 
-export default React.memo(function PopupTable({ keyValPairs, obj }) {
-    const classes = useStyles();
+    getColor(value) {
+        if(this.minMax && typeof value === "number"){
+            const normalizedValue = Math.min(Math.max((value - this.minMax[0]) / (this.minMax[1] - this.minMax[0]), 0), 0.9999999);
+            return this.gradient[Math.floor(normalizedValue * 100)]
+        }
+        else if(this.options && typeof value === "string"){
+            return this.colorMapping[value]
+        }
+        return "#000000"
+    }
 
-    return <TableContainer component={Paper}>
-        <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-                <TableRow>
-                    <TableCell><b>Key</b></TableCell>
-                    <TableCell><b>Value</b></TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {keyValPairs
-                    .filter(([key, value]) => keyValueIsValid(key, value))
-                    .map(([key, value]) => (
-                        <TableRow key={key}>
-                            <TableCell component="th" scope="row">
-                                {keyToDisplay(obj, key)}
-                            </TableCell>
-                            <TableCell>{valueToDisplay(obj, key, value)}</TableCell>
-                        </TableRow>
-                    ))}
-            </TableBody>
-        </Table>
-    </TableContainer>;
-});
+    getColorSummary() {
+        if(this.minMax){
+            return {
+                minMax: this.minMax,
+                gradient: this.gradient
+            }
+        }
+        else if(this.options){
+            return {
+                colorMapping: this.colorMapping
+            }
+        }
+    }
+
+    _setKnowns(predefinedColor) {
+        if (predefinedColor.style === "solid") {
+            this.overrideColor = predefinedColor.colorCode;
+            return;
+        }
+        else if (predefinedColor.style === "gradient" && predefinedColor.gradient) {
+            this.gradient = this._createGradient(predefinedColor.gradient)
+        }
+        else if (predefinedColor.style === "gradient") {
+            this.gradient = this._createGradient(defaultGradient)
+        }
+        else if (predefinedColor.style === "sequential" && predefinedColor.map) {
+            this.colorMapping = predefinedColor.map;
+        }
+        else if (predefinedColor.style === "sequential") {
+            this._createDefaultColorMapping()
+        }
+    }
+
+    _createGradient(gradientArr, resolution = 100) {
+        const colorGradient = new Gradient();
+        colorGradient.setGradient(...gradientArr);
+        colorGradient.setMidpoint(resolution);
+        return colorGradient.getArray();
+    }
+
+    _setDefaults(fieldType) {
+        if(fieldType === "numeric"){
+            this.gradient = this._createGradient(defaultGradient)
+        }
+        else{
+            this._createDefaultColorMapping();
+        }
+    }
+
+    _createDefaultColorMapping() {
+        const numOptions = this.options.length;
+        const grad = this._createGradient(defaultGradient, numOptions)
+        this.colorMapping = this.options.reduce((acc, curr, index) => {
+            acc[curr] = grad[index]
+            return acc;
+        }, {})
+    }
+}

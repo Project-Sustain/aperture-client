@@ -56,38 +56,36 @@ You may add Your own copyright statement to Your modifications and may provide a
 
 END OF TERMS AND CONDITIONS
 */
-import React, {useState} from 'react';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import {componentIsRendering} from "../TabSystem";
-import Util from "../../library/apertureUtil"
 
-function updateLayerConstraints(activeLayerConstraints, index) {
-    let tempActiveConstraints = [...activeLayerConstraints];
-    tempActiveConstraints[index] = !tempActiveConstraints[index];
-    return tempActiveConstraints;
-}
+import React, { useState } from "react";
+import { valueToDisplay } from "./PopupUtils";
+import { Table, TableContainer, TableHead, TableCell, TableRow, TableBody, Paper, makeStyles, Tooltip } from "@material-ui/core";
+import PaletteIcon from '@material-ui/icons/Palette';
+import useHover from "../../hooks/useHover";
 
-export default function AdvancedConstraintCheckbox(props) {
-    const [check, setCheck] = useState(props.activeLayerConstraints[props.constraintIndex]);
+const useStyles = makeStyles({
+    root: {
+        display: 'flex'
+    }
+});
 
-    if(componentIsRendering) {console.log("|AdvancedContraintCheckbox Rerending|")}
-    return (
-        <FormGroup>
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={check}
-                        onChange={() => {
-                            setCheck(!check);
-                            props.setActiveLayerConstraints(updateLayerConstraints(props.activeLayerConstraints, props.constraintIndex));
-                        }}
-                        color="primary"
-                    />
-                }
-                label={props.constraint.label ?? Util.cleanUpString(props.constraint.name)}
-            />
-        </FormGroup>
-    );
+export default function PopupTableValue({ obj, keyValue, value, currentColorField, isHovered }) {
+    //console.log({ obj, keyValue })
+    const classes = useStyles()
+
+    const colorIcon = () => {
+        if (currentColorField?.name === keyValue) {
+            return <Tooltip title="Color coding is based on this field.">
+                <PaletteIcon />
+            </Tooltip>;
+        }
+        else if(isHovered){
+            return <PaletteIcon color="disabled"/>
+        }
+    }
+
+    return <div className={classes.root}>
+        {valueToDisplay(obj, keyValue, value)}
+        {colorIcon()}
+    </div>
 }
